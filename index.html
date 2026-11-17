@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Psyché – komplexní test osobnosti</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--card:#fffdf9;--ink:#1f2430;--muted:#6b6f7a;--line:#e5dccd;--acc:#2f5d62;--acc-l:#e3eded;--acc2:#b8603e;--acc2-l:#f8ebe4;--ok:#4f7a4a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:800px;margin:0 auto;padding:24px 16px 90px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2;margin:.2em 0 .5em}
+h1{font-size:clamp(30px,6vw,46px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:26px;font-weight:600}
+h3{font-size:19px;font-weight:600;margin-top:1.2em}
+p{margin:.5em 0 .9em}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin:16px 0}
+.hero{text-align:center;padding:40px 24px}
+.hero .sym{font-family:Fraunces,serif;font-size:64px;color:var(--acc);line-height:1}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;background:var(--acc);color:#fff;font:600 16px Inter,sans-serif;padding:13px 26px;border-radius:12px;cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--acc);border:1.5px solid var(--acc)}
+.btn.sm{padding:8px 16px;font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+label.f{display:block;font-weight:600;margin:14px 0 6px;font-size:14.5px}
+input,select{width:100%;font:16px Inter,sans-serif;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;cursor:pointer;font:500 14.5px Inter,sans-serif;color:var(--ink)}
+.pill.sel{background:var(--acc);border-color:var(--acc);color:#fff}
+.prog{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px}
+.prog .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.prog .lbl{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:5px}
+.q{padding:18px 0;border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0}
+.q .t{font-weight:500;font-size:16.5px}
+.q.done .t{color:var(--muted)}
+.lik{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.lik.four{grid-template-columns:repeat(4,1fr)}
+.lik button{padding:10px 4px;border:1px solid var(--line);background:#fff;border-radius:10px;font:500 12.5px/1.25 Inter,sans-serif;cursor:pointer;color:var(--ink);min-height:48px}
+.lik button:hover{border-color:var(--acc)}
+.lik button.sel{background:var(--acc);color:#fff;border-color:var(--acc)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.opts.txt{grid-template-columns:1fr}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px;cursor:pointer;text-align:center;font:500 14px/1.35 Inter,sans-serif;color:var(--ink)}
+.opts.txt .opt{text-align:left;padding:12px 14px}
+.opt:hover{border-color:var(--acc)}
+.opt.sel{border-color:var(--acc);background:var(--acc-l);box-shadow:0 0 0 2px var(--acc) inset}
+.opt svg{width:100%;height:120px;display:block;margin-bottom:6px}
+.sw{height:64px;border-radius:9px;margin-bottom:6px;border:1px solid rgba(0,0,0,.08)}
+.sec-intro{background:var(--acc-l);border-radius:14px;padding:14px 18px;margin:8px 0 4px;font-size:15px}
+.nav{display:flex;justify-content:space-between;margin-top:20px;gap:10px}
+/* results */
+.trait{margin:22px 0;padding-top:16px;border-top:1px solid var(--line)}
+.trait:first-of-type{border-top:0}
+.th{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.th h3{margin:0}
+.meter{height:12px;background:#ece5d9;border-radius:8px;position:relative;margin:10px 0 4px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:var(--acc)}
+.meter b{position:absolute;top:-4px;width:3px;height:20px;background:var(--ink);border-radius:2px}
+.scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.tag{display:inline-block;padding:3px 11px;border-radius:99px;background:var(--acc-l);color:var(--acc);font-size:13px;font-weight:600}
+.tag.w{background:var(--acc2-l);color:var(--acc2)}
+.flag{border-left:4px solid var(--acc2);padding:12px 16px;background:var(--acc2-l);border-radius:8px;margin:10px 0}
+.flag.ok{border-color:var(--ok);background:#edf3ea}
+.arche{text-align:center;padding:32px 24px;background:linear-gradient(160deg,#2f5d62,#1f3f44);color:#fff;border:0}
+.arche h1{color:#fff;margin:.1em 0 .2em}
+.arche .k{opacity:.8;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.arche p{opacity:.92;max-width:560px;margin:10px auto 0}
+ul.cl{padding-left:20px;margin:.4em 0}
+ul.cl li{margin:4px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.box{background:#faf6ef;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.chart{display:flex;justify-content:center}
+.chart svg{max-width:100%;height:auto}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.toc a{font-size:13px;color:var(--acc);text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:99px;background:#fff}
+.quote{font-style:italic;color:#444}
+.disc{font-size:13px;color:var(--muted);border-top:1px solid var(--line);margin-top:22px;padding-top:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ===================== DATA ===================== */
+const LIK = ['Rozhodně ne','Spíše ne','Nevím / něco mezi','Spíše ano','Rozhodně ano'];
+const PHQ = ['Vůbec ne','Několik dní','Víc než polovinu dní','Téměř každý den'];
+
+// [scale, key, text, pairTag]
+const MAIN = [
+// Extraverze (IPIP)
+['E',1,'Jsem duší každé party.'],['E',-1,'Moc nemluvím.'],['E',1,'Ve společnosti lidí se cítím dobře.','pE'],['E',-1,'Držím se raději v pozadí.','pE'],['E',1,'Často začínám konverzaci jako první.'],['E',-1,'Nemám moc co říct.'],['E',1,'Na akcích mluvím s mnoha různými lidmi.'],['E',-1,'Nerad[|a] na sebe upozorňuji.'],['E',1,'Nevadí mi být středem pozornosti.'],['E',-1,'Mezi cizími lidmi jsem tich[ý|á].'],
+// Přívětivost
+['A',-1,'Moc mě nezajímají problémy druhých.'],['A',1,'Zajímám se o lidi kolem sebe.','pA'],['A',-1,'Občas lidi urážím.'],['A',1,'Soucítím s pocity druhých.'],['A',-1,'Ostatní lidé mě nijak zvlášť nezajímají.','pA'],['A',1,'Mám měkké srdce.'],['A',-1,'K druhým bývám chladn[ý|á].'],['A',1,'Udělám si čas na druhé, i když spěchám.'],['A',1,'Vycítím, jak se druzí cítí.'],['A',1,'Dokážu, aby se lidé v mé přítomnosti cítili dobře.'],
+// Svědomitost
+['C',1,'Jsem vždy připraven[ý|á].'],['C',-1,'Nechávám své věci povalovat kolem.'],['C',1,'Dbám na detaily.'],['C',-1,'Kolem sebe dělám nepořádek.','pC'],['C',1,'Povinnosti vyřizuji hned.'],['C',-1,'Často zapomínám vracet věci na své místo.'],['C',1,'Mám rád[|a] pořádek.','pC'],['C',-1,'Vyhýbám se svým povinnostem.'],['C',1,'Řídím se plánem.'],['C',1,'Ve své práci jsem precizní.'],
+// Neuroticismus
+['N',1,'Snadno se dostanu do stresu.','pN'],['N',-1,'Většinou jsem uvolněn[ý|á].','pN'],['N',1,'Dělám si starosti o spoustu věcí.'],['N',-1,'Málokdy se cítím na dně.'],['N',1,'Snadno mě něco rozhodí.'],['N',1,'Snadno se rozruším.'],['N',1,'Často se mi mění nálada.'],['N',1,'Snadno se podráždím.'],['N',1,'Často se cítím sklesl[ý|á].'],['N',-1,'Nepříjemnosti zvládám s klidem.'],
+// Otevřenost
+['O',1,'Mám bohatou slovní zásobu.'],['O',-1,'Abstraktní myšlenky mě nebaví.'],['O',1,'Mám živou představivost.','pO'],['O',-1,'Mám slabou představivost.','pO'],['O',1,'Mám skvělé nápady.'],['O',-1,'Umění mě nechává chladn[ým|ou].'],['O',1,'Rychle chápu nové věci.'],['O',1,'Rád[|a] přemýšlím o hlubokých otázkách.'],['O',-1,'Nevyhledávám nové zážitky a změny.'],['O',1,'Jsem pln[ý|á] nápadů.'],
+// HEXACO Poctivost-pokora
+['H',1,'Nikdy bych nepřijal[|a] úplatek, ani kdyby byl hodně velký.'],['H',1,'Nepředstírám, že mám někoho rád[|a], jen abych z něj něco získal[|a].'],['H',1,'Abych se cítil[|a] dobře, nepotřebuji luxusní věci.'],['H',1,'Nepovažuji se za nikoho výjimečnějšího než ostatní.'],['H',-1,'Lichotím lidem, abych dosáhl[|a] svého.'],['H',-1,'Kdybych věděl[|a], že mě nikdo nemůže chytit, klidně bych vzal[|a] cizí peníze.'],['H',-1,'Chci, aby lidé věděli, že jsem důležitá osoba.'],['H',-1,'Rád[|a] bych žil[|a] ve velkém luxusu.'],
+// Temná triáda
+['M',1,'Umím lidi zmanipulovat, abych dosáhl[|a] svého.'],['M',1,'Je chytré schovávat si informace, které můžu později použít proti druhým.'],['M',1,'Vyplatí se lidem říkat to, co chtějí slyšet, i když to není pravda.'],['M',1,'Svět je o tom, kdo koho přechytračí.'],
+['P',1,'Málokdy cítím lítost, když někomu ublížím.'],['P',1,'Riskuji jen pro to vzrušení, i když to může špatně dopadnout.'],['P',1,'Pomsta má být rychlá a tvrdá.'],['P',1,'Moc mě netrápí, když je někdo kvůli mně smutný.'],
+['X',1,'Chci, aby mě lidé obdivovali.'],['X',1,'Zasloužím si zvláštní zacházení.'],['X',1,'Očekávám od druhých uznání a pozornost.'],['X',1,'Jsem schopnější než většina lidí kolem mě.'],
+// Lži-skóre (validita)
+['L',1,'Nikdy v životě jsem nikomu nezalhal[|a], ani v maličkosti.'],['L',1,'Nikdy jsem o nikom neřekl[|a] nic nepěkného za jeho zády.'],['L',1,'Vždycky dodržím úplně každý slib.']
+];
+const REL = [
+['AX',1,'Bojím se, že mě blízcí lidé (partner/ka) opustí.'],['AX',1,'Potřebuji časté ujištění, že mě druzí mají rádi.'],['AX',1,'Když mi blízký člověk dlouho neodpovídá, znejistím.'],['AX',1,'Bojím se, že mě druzí nemají tak rádi jako já je.'],['AX',-1,'Málokdy se bojím, že bych zůstal[|a] opuštěn[ý|á].'],
+['AV',1,'Je mi nepříjemné, když se ke mně někdo citově moc přiblíží.'],['AV',1,'Nerad[|a] ukazuji druhým, co doopravdy cítím.'],['AV',1,'Těžko si dovolím na někom záviset.'],['AV',1,'Když se vztah stane hodně blízkým, mám tendenci se stáhnout.'],['AV',-1,'Snadno se blízkým lidem otevřu.'],
+['R',1,'Celkově jsem se sebou spokojen[ý|á].'],['R',-1,'Občas si připadám úplně k ničemu.'],['R',1,'Mám řadu dobrých vlastností.'],['R',1,'Zvládnu věci stejně dobře jako většina lidí.'],['R',-1,'Myslím, že nemám moc na co být hrd[ý|á].'],['R',1,'Mám k sobě pozitivní vztah.']
+];
+const PHQ4 = [
+['D','Malý zájem o věci nebo malé potěšení z činností'],['D','Pocity skleslosti, smutku nebo beznaděje'],
+['G','Pocit nervozity, úzkosti nebo napětí'],['G','Neschopnost zastavit nebo ovládat své obavy']
+];
+
+/* Tree SVGs (Baumtest) */
+const GR='#5f8f4e',GR2='#46743d',BR='#7a5233';
+const ground='<line x1="5" y1="134" x2="115" y2="134" stroke="#cbbfa9" stroke-width="2"/>';
+const TREES = {
+ dub:`<svg viewBox="0 0 120 140">${ground}<path d="M52 134 C51 112 53 96 55 80 L65 80 C67 96 69 112 68 134Z" fill="${BR}"/><path d="M53 128 Q40 133 26 138 M67 128 Q80 133 94 138 M60 131 Q56 136 50 139" stroke="${BR}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="38" cy="56" r="25" fill="${GR}"/><circle cx="82" cy="56" r="25" fill="${GR}"/><circle cx="60" cy="38" r="29" fill="${GR2}"/><circle cx="60" cy="66" r="24" fill="${GR}"/><circle cx="26" cy="72" r="14" fill="${GR2}"/><circle cx="94" cy="72" r="14" fill="${GR2}"/></svg>`,
+ topol:`<svg viewBox="0 0 120 140">${ground}<rect x="57" y="78" width="6" height="56" fill="${BR}"/><ellipse cx="60" cy="52" rx="15" ry="46" fill="${GR2}"/><ellipse cx="60" cy="56" rx="9" ry="36" fill="${GR}"/></svg>`,
+ holy:`<svg viewBox="0 0 120 140">${ground}<path d="M55 134 L57 70 L63 70 L65 134Z" fill="${BR}"/><g stroke="${BR}" stroke-width="3" fill="none" stroke-linecap="round"><path d="M60 72 L60 18"/><path d="M60 80 L32 50 L22 30"/><path d="M60 78 L90 46 L98 26"/><path d="M60 50 L42 30"/><path d="M60 46 L80 26"/><path d="M32 50 L18 52"/><path d="M90 46 L104 48"/><path d="M42 30 L38 16"/><path d="M80 26 L86 12"/></g></svg>`,
+ smrk:`<svg viewBox="0 0 120 140">${ground}<rect x="56" y="112" width="8" height="22" fill="${BR}"/><polygon points="60,8 82,48 38,48" fill="${GR2}"/><polygon points="60,30 90,78 30,78" fill="${GR2}"/><polygon points="60,56 98,114 22,114" fill="${GR2}"/></svg>`,
+ jablon:`<svg viewBox="0 0 120 140">${ground}<path d="M55 134 L56 82 L64 82 L65 134Z" fill="${BR}"/><circle cx="60" cy="56" r="40" fill="${GR}"/><g fill="#c8433a"><circle cx="44" cy="44" r="5"/><circle cx="72" cy="38" r="5"/><circle cx="58" cy="62" r="5"/><circle cx="82" cy="64" r="5"/><circle cx="36" cy="70" r="5"/><circle cx="62" cy="30" r="5"/></g></svg>`,
+ vrba:`<svg viewBox="0 0 120 140">${ground}<path d="M54 134 C56 110 52 92 58 70 L64 70 C62 92 66 110 66 134Z" fill="${BR}"/><path d="M18 76 Q60 6 102 76" fill="${GR}" opacity=".55"/><g stroke="${GR2}" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M22 70 Q20 92 22 112"/><path d="M32 56 Q28 86 31 118"/><path d="M44 44 Q40 80 43 120"/><path d="M76 44 Q80 80 77 120"/><path d="M88 56 Q92 86 89 118"/><path d="M98 70 Q100 92 98 112"/><path d="M56 40 Q53 70 55 98"/><path d="M66 40 Q69 70 67 98"/></g></svg>`,
+ stromek:`<svg viewBox="0 0 120 140">${ground}<rect x="58" y="112" width="4" height="22" fill="${BR}"/><circle cx="60" cy="102" r="15" fill="${GR}"/></svg>`
+};
+const COLORS = [['modra','modrá','#1f4e8c'],['zelena','zelená','#2f6e4a'],['cervena','červená','#c8372d'],['zluta','žlutá','#efc531'],['fialova','fialová','#7a3f8e'],['hneda','hnědá','#7a5233'],['cerna','černá','#141414'],['seda','šedá','#9a9a9a']];
+
+const PROJ = [
+ {id:'tree',page:'baum',t:'Představ si, že máš nakreslit strom – jakýkoli, ne nutně hezký. Který z těchto se nejvíc blíží stromu, který by se ti vybavil jako první?',opts:[['dub','Mohutný listnatý strom (dub)'],['topol','Vysoký štíhlý strom (topol)'],['holy','Strom bez listí'],['smrk','Jehličnan (smrk)'],['jablon','Ovocný strom s plody'],['vrba','Smuteční vrba'],['stromek','Malý stromek']],svg:true},
+ {id:'roots',page:'baum',t:'Jak by vypadaly kořeny tvého stromu?',opts:[['strong','Mohutné, viditelně rozvětvené kořeny'],['hint','Jen naznačené u paty kmene'],['none','Žádné – strom stojí rovnou na zemi'],['float','Strom by spíš „visel ve vzduchu“, bez země pod sebou']]},
+ {id:'trunk',page:'baum',t:'A kmen?',opts:[['straight','Rovný, hladký a pevný'],['thick','Velmi široký a mohutný'],['scar','S jizvou, dutinou nebo zlomenou větví'],['bent','Zakřivený nebo nakloněný']]},
+ {id:'pos',page:'baum',t:'Kam na papír bys strom umístil[|a]?',opts:[['left','Spíš do levé části'],['center','Doprostřed'],['right','Spíš do pravé části'],['small','Malý, někam do rohu nebo k okraji'],['big','Přes celý papír, až přesahuje okraje']]},
+ {id:'weather',page:'baum',t:'Co by bylo kolem stromu?',opts:[['sun','Slunce a modrá obloha'],['rain','Déšť nebo mraky'],['wind','Silný vítr ohýbající větve'],['night','Noc, měsíc, hvězdy'],['nothing','Nic – jen samotný strom'],['people','Lidé, zvířata, dům, život kolem']]},
+ {id:'cfav',page:'color',t:'Kterou z těchto barev máš v tuto chvíli nejraději? (Nevybírej podle oblečení nebo interiéru – jen podle toho, která je ti teď nejpříjemnější.)',color:true},
+ {id:'crej',page:'color',t:'A která je ti teď nejméně příjemná?',color:true},
+ {id:'cube',page:'cube',t:'Zavři na chvíli oči a představ si nekonečnou poušť. Je v ní kostka. Jak je velká?',opts:[['tiny','Malá, jako kostka cukru'],['mid','Asi jako stůl nebo auto'],['huge','Obrovská, jako dům nebo větší']]},
+ {id:'mat',page:'cube',t:'Z čeho je kostka?',opts:[['glass','Ze skla – je průhledná'],['stone','Z kamene – pevná, neprůhledná'],['metal','Z lesklého kovu – odráží okolí'],['wood','Ze dřeva – teplá, přírodní']]},
+ {id:'horse',page:'cube',t:'V poušti je také kůň. Kde je a co dělá?',opts:[['tied','Stojí u kostky, je u ní uvázaný'],['near','Je poblíž, volně se pase'],['far','Běží volně v dálce'],['none','Žádného koně nevidím']]},
+ {id:'storm',page:'cube',t:'Na obzoru se objeví bouře. Kde je?',opts:[['far','Daleko na obzoru, míří jinam'],['coming','Blíží se ke kostce'],['over','Je přímo nad kostkou'],['none','Žádná bouře tam není']]}
+];
+
+/* ===================== PAGES ===================== */
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(20261117);
+const mainItems=MAIN.map((x,i)=>({id:'m'+i,s:x[0],k:x[1],t:x[2],p:x[3]||null,type:'lik'}));
+for(let i=mainItems.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[mainItems[i],mainItems[j]]=[mainItems[j],mainItems[i]];}
+const relItems=REL.map((x,i)=>({id:'r'+i,s:x[0],k:x[1],t:x[2],type:'lik'}));
+for(let i=relItems.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[relItems[i],relItems[j]]=[relItems[j],relItems[i]];}
+const phqItems=PHQ4.map((x,i)=>({id:'d'+i,s:x[0],t:x[1],type:'phq'}));
+const projItems=PROJ.map(x=>({...x,type:x.color?'color':'choice'}));
+
+const PAGES=[];
+const PER=8, nMain=Math.ceil(mainItems.length/PER);
+for(let p=0;p<nMain;p++)PAGES.push({part:'Část 1 · Osobnost',intro:p===0?'Odpovídej podle toho, jak<b> obvykle</b> jednáš a cítíš – ne jak bys chtěl[|a] být. Neexistují správné ani špatné odpovědi. Nejlepší je odpovídat rychle, podle prvního pocitu.':null,items:mainItems.slice(p*PER,p*PER+PER)});
+PAGES.push({part:'Část 2 · Vztahy a sebepojetí',intro:'Následující výroky se týkají blízkých vztahů (partner/ka, rodina, nejbližší přátelé) a toho, jak vnímáš sám sebe [sám|sama].',items:relItems.slice(0,8)});
+PAGES.push({part:'Část 2 · Vztahy a sebepojetí',intro:null,items:relItems.slice(8)});
+PAGES.push({part:'Část 3 · Aktuální psychická pohoda',intro:'Jak často tě v <b>posledních 2 týdnech</b> trápilo následující? (Krátký screening PHQ-4, který používají lékaři.)',items:phqItems});
+PAGES.push({part:'Část 4 · Projektivní úlohy – strom',intro:'Inspirováno <b>Baumovým testem stromu</b> (Karl Koch, 1949). V originále se strom kreslí ručně; tady vybíráš z možností, které se nejvíc blíží tvé představě.',items:projItems.filter(x=>x.page==='baum')});
+PAGES.push({part:'Část 4 · Projektivní úlohy – barvy',intro:'Inspirováno <b>Lüscherovým barevným testem</b> (Max Lüscher, 1947). Vybírej spontánně.',items:projItems.filter(x=>x.page==='color')});
+PAGES.push({part:'Část 4 · Projektivní úlohy – kostka v poušti',intro:'Oblíbená imaginativní hra (japonská „kokology“). Vědecky ověřená není, berte ji s nadsázkou. Představ si scénu a vyber první, co tě napadne.',items:projItems.filter(x=>x.page==='cube')});
+const ALL=PAGES.flatMap(p=>p.items);
+
+/* ===================== STATE ===================== */
+let S={screen:'intro',profile:{},answers:{},page:0,start:null};
+const LS='psyche_v1';
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function load(){try{const x=JSON.parse(localStorage.getItem(LS));if(x&&x.answers)return x}catch(e){}return null}
+let saved=load();
+
+/* gender templating */
+function G(s){const g=S.profile.gender;return s.replace(/\[([^|\]]*)\|([^\]]*)\]/g,(m,a,b)=>g==='f'?b:g==='m'?a:(a?`${a}/${b}`:`(${b})`))}
+const $=s=>document.querySelector(s);
+const app=$('#app');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+
+/* ===================== SCREENS ===================== */
+function render(){
+ if(S.screen==='intro')return renderIntro();
+ if(S.screen==='form')return renderForm();
+ if(S.screen==='q')return renderPage();
+ if(S.screen==='res')return renderResults();
+}
+function renderIntro(){
+ app.innerHTML=`<div class="card hero"><div class="sym">Ψ</div><h1>Psyché</h1><p class="muted" style="font-size:18px;max-width:560px;margin:0 auto 18px">Komplexní test osobnosti postavený na ověřených psychologických dotaznících. Na konci dostaneš podrobný osobnostní profil.</p>
+ <div class="row" style="justify-content:center">${saved&&saved.screen!=='intro'?`<button class="btn" id="cont">Pokračovat v rozpracovaném testu</button><button class="btn ghost" id="go">Začít znovu</button>`:`<button class="btn" id="go">Začít test →</button>`}</div>
+ <p class="small muted" style="margin-top:16px">${ALL.length} otázek · zhruba 15–20 minut · odpovědi zůstávají jen v tvém prohlížeči</p></div>
+ <div class="card"><h3 style="margin-top:0">Z čeho test vychází</h3>
+ <ul class="cl">
+ <li><b>Velká pětka (Big Five)</b> – 50 položek podle IPIP (Goldberg, 1992), nejlépe vědecky podložený model osobnosti</li>
+ <li><b>HEXACO – poctivost a pokora</b> (Ashton &amp; Lee, 2004)</li>
+ <li><b>Temná triáda</b> – machiavelismus, narcismus, psychopatie (Paulhus &amp; Williams, 2002)</li>
+ <li><b>Citová vazba v dospělosti</b> podle modelu ECR (Brennan, Clark &amp; Shaver, 1998)</li>
+ <li><b>Sebehodnocení</b> podle Rosenbergovy škály (1965)</li>
+ <li><b>PHQ-4</b> – krátký screening úzkosti a deprese (Kroenke a kol., 2009)</li>
+ <li><b>Temperament</b> podle Eysencka a <b>interpersonální kruh</b> (Leary, Wiggins)</li>
+ <li><b>Kontrolní škála lži</b> podle principu L-škály z MMPI, kontrola konzistence a rychlosti odpovědí</li>
+ <li>Projektivní úlohy: <b>Baumův test stromu</b> (Koch), <b>Lüscherův barevný test</b> a hra <b>Kostka v poušti</b></li>
+ </ul>
+ <p class="small muted">Položky jsou česká adaptace volně dostupných dotazníků. Normy jsou orientační a nejde o standardizovaný klinický nástroj. Výsledek je sebepoznávací, <b>není to psychologická diagnóza</b>.</p></div>`;
+ $('#go').onclick=()=>{S={screen:'form',profile:{},answers:{},page:0,start:null};saved=null;save();render();scrollTo(0,0)};
+ const c=$('#cont');if(c)c.onclick=()=>{S=saved;render();scrollTo(0,0)};
+}
+const FORM=[
+ {k:'gender',l:'Pohlaví',o:[['m','Muž'],['f','Žena'],['x','Jiné / nechci uvádět']]},
+ {k:'edu',l:'Nejvyšší dosažené vzdělání',o:[['zs','Základní'],['vy','Vyučení'],['ss','Středoškolské s maturitou'],['vos','Vyšší odborné'],['vs','Vysokoškolské']]},
+ {k:'job',l:'Současná situace',o:[['student','Student/ka'],['zam','Zaměstnanec'],['osvc','Podnikatel / OSVČ'],['vedouci','Vedoucí pozice'],['rodic','Na rodičovské'],['bez','Bez práce'],['duchod','V důchodu']]},
+ {k:'field',l:'Obor, ve kterém pracuješ nebo studuješ',o:[['tech','Technika, IT, inženýrství'],['sci','Přírodní vědy, výzkum'],['hum','Humanitní, školství'],['art','Umění, design, média'],['eco','Ekonomika, obchod, právo'],['soc','Zdravotnictví, sociální oblast'],['craft','Řemeslo, výroba, služby'],['other','Jiné']]},
+ {k:'rel',l:'Vztahový stav',o:[['single','Nezadaný/á'],['rel','Ve vztahu'],['mar','Ženatý / vdaná'],['div','Rozvedený/á, po rozchodu'],['wid','Ovdovělý/á']]}
+];
+function renderForm(){
+ const p=S.profile;
+ app.innerHTML=`<div class="card"><h2>Než začneme</h2><p class="muted">Tyhle údaje slouží k porovnání s odpovídající skupinou (pohlaví a věk ovlivňují typické hodnoty rysů) a k přizpůsobení textu výsledků.</p>
+ <div class="grid2"><div><label class="f">Jméno nebo přezdívka <span class="muted">(nepovinné)</span></label><input id="nm" maxlength="30" value="${p.name||''}" placeholder="Např. Fanda"></div>
+ <div><label class="f">Věk</label><input id="age" type="number" min="12" max="99" value="${p.age||''}" placeholder="Např. 32"></div></div>
+ ${FORM.map(f=>`<label class="f">${f.l}</label><div class="pills" data-k="${f.k}">${f.o.map(o=>`<button class="pill ${p[f.k]===o[0]?'sel':''}" data-v="${o[0]}">${o[1]}</button>`).join('')}</div>`).join('')}
+ <div class="nav"><button class="btn ghost" id="back">← Zpět</button><button class="btn" id="next">Pokračovat k testu →</button></div><p class="small muted" id="err"></p></div>`;
+ app.querySelectorAll('.pills').forEach(g=>g.onclick=e=>{const b=e.target.closest('.pill');if(!b)return;S.profile[g.dataset.k]=b.dataset.v;g.querySelectorAll('.pill').forEach(x=>x.classList.toggle('sel',x===b));save()});
+ $('#back').onclick=()=>{S.screen='intro';render()};
+ $('#next').onclick=()=>{
+  S.profile.name=$('#nm').value.trim();const a=parseInt($('#age').value);
+  const miss=[];if(!(a>=12&&a<=99))miss.push('věk');FORM.forEach(f=>{if(!S.profile[f.k])miss.push(f.l.toLowerCase())});
+  if(miss.length){$('#err').textContent='Doplň prosím: '+miss.join(', ')+'.';return}
+  S.profile.age=a;S.screen='q';S.page=0;S.start=S.start||Date.now();save();render();scrollTo(0,0)};
+}
+function itemHTML(it){
+ const v=S.answers[it.id];
+ if(it.type==='lik')return `<div class="q ${v?'done':''}" data-id="${it.id}"><div class="t">${G(it.t)}</div><div class="lik">${LIK.map((l,i)=>`<button class="${v===i+1?'sel':''}" data-v="${i+1}">${l}</button>`).join('')}</div></div>`;
+ if(it.type==='phq')return `<div class="q ${v!=null?'done':''}" data-id="${it.id}"><div class="t">${it.t}</div><div class="lik four">${PHQ.map((l,i)=>`<button class="${v===i?'sel':''}" data-v="${i}">${l}</button>`).join('')}</div></div>`;
+ if(it.type==='color')return `<div class="q" data-id="${it.id}"><div class="t">${G(it.t)}</div><div class="opts" style="grid-template-columns:repeat(auto-fill,minmax(80px,1fr))">${COLORS.map(c=>`<button class="opt ${v===c[0]?'sel':''}" data-v="${c[0]}"><div class="sw" style="background:${c[2]}"></div>${c[1]}</button>`).join('')}</div></div>`;
+ return `<div class="q" data-id="${it.id}"><div class="t">${G(it.t)}</div><div class="opts ${it.svg?'':'txt'}">${it.opts.map(o=>`<button class="opt ${v===o[0]?'sel':''}" data-v="${o[0]}">${it.svg?TREES[o[0]]:''}${G(o[1])}</button>`).join('')}</div></div>`;
+}
+function answered(it){return S.answers[it.id]!=null}
+function renderPage(){
+ const pg=PAGES[S.page];const done=ALL.filter(answered).length;
+ app.innerHTML=`<div class="prog"><div class="lbl"><span>${pg.part}</span><span>${done} / ${ALL.length}</span></div><div class="bar"><i style="width:${done/ALL.length*100}%"></i></div></div>
+ <div class="card">${pg.intro?`<div class="sec-intro">${G(pg.intro)}</div>`:''}${pg.items.map(itemHTML).join('')}
+ <div class="nav"><button class="btn ghost" id="back">← Zpět</button><button class="btn" id="next" ${pg.items.every(answered)?'':'disabled'}>${S.page===PAGES.length-1?'Zobrazit výsledky ✦':'Další →'}</button></div></div>
+ <p class="small muted" style="text-align:center">Strana ${S.page+1} z ${PAGES.length} · průběh se ukládá automaticky</p>`;
+ app.querySelectorAll('.q').forEach(q=>q.onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;const it=ALL.find(x=>x.id===q.dataset.id);
+  let v=b.dataset.v;if(it.type==='lik'||it.type==='phq')v=+v;
+  S.answers[it.id]=v;q.querySelectorAll('button').forEach(x=>x.classList.toggle('sel',x===b));q.classList.add('done');save();
+  const d=ALL.filter(answered).length;$('.prog .bar i').style.width=d/ALL.length*100+'%';$('.prog .lbl span:last-child').textContent=d+' / '+ALL.length;
+  $('#next').disabled=!pg.items.every(answered);
+  if(it.type==='lik'||it.type==='phq'){const nx=q.nextElementSibling;if(nx&&nx.classList.contains('q')&&!answered(ALL.find(x=>x.id===nx.dataset.id))){const r=nx.getBoundingClientRect();if(r.top>innerHeight*.6)scrollBy({top:r.top-innerHeight*.35,behavior:'smooth'})}}
+ });
+ $('#back').onclick=()=>{if(S.page===0)S.screen='form';else S.page--;save();render();scrollTo(0,0)};
+ $('#next').onclick=()=>{if(S.page===PAGES.length-1){S.screen='res';S.end=S.end||Date.now()}else S.page++;save();render();scrollTo(0,0)};
+}
+
+/* ===================== SCORING ===================== */
+function erf(x){const s=Math.sign(x);x=Math.abs(x);const t=1/(1+.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-x*x);return s*y}
+const Phi=z=>.5*(1+erf(z/Math.SQRT2));
+const NORM={E:[3.2,.85],A:[3.85,.65],C:[3.55,.7],N:[2.85,.8],O:[3.75,.6],H:[3.3,.65],M:[2.5,.75],X:[2.7,.75],P:[1.9,.65]};
+function normFor(s){
+ let [m,sd]=NORM[s];const g=S.profile.gender,a=S.profile.age;
+ const adj={f:{N:.25,A:.15,H:.15,P:-.2,M:-.15,X:-.1},m:{N:-.1,A:-.1,H:-.1,P:.15,M:.05}};
+ if(adj[g]&&adj[g][s])m+=adj[g][s];
+ const ag=a<25?{C:-.15,N:.1,A:-.05,H:-.1,P:.1,X:.1}:a<40?{}:a<60?{C:.1,A:.1,N:-.1,H:.1}:{C:.15,A:.15,N:-.15,O:-.1,H:.2,X:-.1};
+ if(ag[s])m+=ag[s];return [m,sd];
+}
+function mean(s,items){const it=items.filter(x=>x.s===s);return it.reduce((a,x)=>a+(x.k===1?S.answers[x.id]:6-S.answers[x.id]),0)/it.length}
+function pct(s){const m=mean(s,mainItems);const [nm,sd]=normFor(s);return Math.round(Math.min(99,Math.max(1,Phi((m-nm)/sd)*100)))}
+const lvl=p=>p<15?0:p<35?1:p<65?2:p<85?3:4;
+const LVL=['velmi nízká','nízká','průměrná','vysoká','velmi vysoká'];
+const tri=p=>p<35?0:p<65?1:2;
+
+/* ===================== TEXTS ===================== */
+const TR={
+E:{n:'Extraverze',d:'Společenskost, energie, asertivita, vyhledávání podnětů',lo:'Introverze',hi:'Extraverze',
+ t:['Jsi spíše introvertní povaha. Energii čerpáš z klidu, samoty nebo z malého okruhu blízkých lidí, zatímco velké společenské akce tě po čase vyčerpávají. Než promluvíš, raději si věci promyslíš, a když už něco řekneš, má to obvykle váhu. Lidé tě mohou zpočátku vnímat jako rezervovan[ého|ou] nebo těžko čiteln[ého|ou], ale ti, kdo tě poznají blíž, oceňují tvou hloubku, schopnost naslouchat a soustředit se. Introverze ale není plachost: nemusíš se lidí bát, jen je nepotřebuješ v takovém množství.',
+ 'V extraverzi se pohybuješ ve středním pásmu – jsi tzv. <b>ambivert</b>. Umíš si užít společnost a zapojit se v kolektivu, ale stejně tak potřebuješ čas pro sebe. Tvé chování se hodně řídí situací: mezi známými můžeš být hlasit[ý|á] a vtipn[ý|á], mezi cizími spíš vyčkáváš. Tahle flexibilita je výhoda – zvládáš týmovou práci i samostatné soustředění.',
+ 'Jsi výrazně extravertní. Společnost lidí tě nabíjí, rád[|a] mluvíš, začínáš konverzace a ve skupině přirozeně přebíráš iniciativu. Působíš energicky, přátelsky a sebejistě a obvykle snadno navazuješ nové kontakty. Máš sklon vyhledávat podněty, akci a vzrušení; dlouhá samota nebo monotónní práce tě frustrují. Stinná stránka: někdy mluvíš dřív, než to domyslíš, nebo tiché lidi kolem sebe nechtěně přehlušíš.'],
+ s:['hloubka a soustředění','umíš naslouchat','samostatnost'],w:['může ti chybět sebeprosazení ve skupině','networking tě vyčerpává'],sh:['komunikativnost','energie a nadšení','snadno navazuješ kontakty'],wh:['potřeba neustálých podnětů','sklon přehlušit ostatní']},
+A:{n:'Přívětivost',d:'Empatie, důvěra, ochota pomoci, kooperace',lo:'Soutěživost',hi:'Vstřícnost',
+ t:['Jsi spíše soutěživ[ý|á], kritick[ý|á] a přím[ý|á]. Nenecháš se snadno ovlivnit emocemi druhých a v rozhodování dáváš přednost logice a vlastním zájmům před harmonií. Díky tomu jsi dobr[ý|á] vyjednavač, kritik a člověk, který si nenechá „skákat po hlavě“. Na druhou stranu můžeš působit chladně, skepticky nebo konfliktně a lidé kolem tebe se mohou cítit neocenění. Skepse vůči motivům druhých tě chrání před zneužitím, ale může bránit hlubším vztahům.',
+ 'V přívětivosti jsi vyvážen[ý|á]. Umíš být laskav[ý|á] a ochotn[ý|á] pomoci, ale zároveň si dokážeš stát za svým a říct „ne“. Důvěřuješ lidem, kteří si to zaslouží, a k ostatním jsi opatrnější. V konfliktech hledáš kompromis, ale ozveš se, když jde o něco důležitého.',
+ 'Jsi velmi vstřícn[ý|á], empatick[ý|á] a laskav[ý|á]. Zajímají tě pocity druhých, rád[|a] pomáháš a vztahy a harmonie jsou pro tebe důležité. Lidé ti obvykle důvěřují a cítí se s tebou dobře. Riziko je v tom, že potřeby druhých stavíš nad vlastní, těžko říkáš „ne“ a vyhýbáš se konfliktům, i když by bylo zdravé je otevřít. Bezohlední lidé mohou tvou dobrotu zneužít.'],
+ s:['přímost a upřímná kritika','odolnost vůči manipulaci','vyjednávání'],w:['můžeš působit chladně','sklon ke konfliktům'],sh:['empatie','spolupráce a týmovost','lidé ti důvěřují'],wh:['neumíš říct ne','vyhýbání se konfliktům']},
+C:{n:'Svědomitost',d:'Organizovanost, disciplína, spolehlivost, cílevědomost',lo:'Spontánnost',hi:'Disciplína',
+ t:['Jsi spontánní, flexibilní a žiješ spíš přítomností než plánem. Nelpíš na řádu, pravidlech a detailech, raději improvizuješ a rozhoduješ se podle nálady a situace. To ti dává svobodu, kreativitu a schopnost rychle reagovat na změny. Na druhou stranu můžeš mít potíže s dotahováním úkolů, s prokrastinací, termíny nebo pořádkem. Dlouhodobé cíle ti mohou utíkat, pokud pro ně nemáš silnou vnitřní motivaci.',
+ 'Ve svědomitosti jsi průměrn[ý|á]. Umíš být organizovan[ý|á] a spolehliv[ý|á], když na věcech záleží, ale nejsi otrokem plánů. Občas něco odložíš nebo zapomeneš, důležité povinnosti ale obvykle zvládneš. Máš zdravou rovnováhu mezi disciplínou a schopností si odpočinout.',
+ 'Jsi výrazně svědom[itý|itá], organizovan[ý|á] a cílevědom[ý|á]. Máš rád[|a] řád, plány a dotažené věci, povinnosti plníš včas a na tvé slovo je spolehnutí. Svědomitost patří k nejsilnějším prediktorům pracovního i studijního úspěchu. Stinnou stránkou může být perfekcionismus, rigidita, problém s odpočinkem a nespokojenost, když věci nejdou podle plánu. Sobě i druhým můžeš klást až příliš vysoké nároky.'],
+ s:['flexibilita','improvizace','pohoda v chaosu'],w:['prokrastinace','nedotažené úkoly'],sh:['spolehlivost','vytrvalost','preciznost'],wh:['perfekcionismus','rigidita, potíže s odpočinkem']},
+N:{n:'Neuroticismus',d:'Citlivost na stres, úzkostnost, emoční labilita (opak = emoční stabilita)',lo:'Stabilita',hi:'Citlivost',
+ t:['Jsi emočně stabilní a odoln[ý|á] vůči stresu. Málokdy tě něco vyvede z míry a i v náročných situacích si zachováváš klid a nadhled. Úzkost, smutek nebo vztek u tebe přicházejí méně často a rychleji odezní. Lidé tě mohou vnímat jako „skálu“, o kterou se dá opřít. Riziko? Velmi nízká úroveň může znamenat podceňování skutečných hrozeb nebo menší vnímavost k trápení druhých.',
+ 'Emočně jsi v normě – stres prožíváš podobně jako většina lidí. Některé situace tě rozhodí, ale obvykle se poměrně rychle vzpamatuješ. Tvoje citlivost na hrozby a nepříjemnosti je přiměřená: chrání tě, ale neparalyzuje.',
+ 'Prožíváš emoce intenzivně a jsi citlivější na stres. Častěji se u tebe objevují starosti, napětí, podrážděnost nebo smutek a nepříjemné zážitky v tobě doznívají déle. Tato vlastnost bývá spojena s vyšší vnímavostí, opatrností a často i s hlubokým prožíváním a uměleckým cítěním. Zároveň ale zvyšuje riziko vyčerpání, úzkostí a psychosomatických potíží, pokud nemáš dobré způsoby, jak napětí zvládat. Dobrá zpráva: techniky zvládání stresu (pohyb, spánek, mindfulness, terapie) mají u lidí s tímto profilem největší účinek.'],
+ s:['klid pod tlakem','nadhled','odolnost'],w:['můžeš podceňovat rizika'],sh:['citlivost a vnímavost','opatrnost','hloubka prožívání'],wh:['sklon k obavám a stresu','výkyvy nálad']},
+O:{n:'Otevřenost',d:'Zvídavost, fantazie, estetické cítění, otevřenost novému',lo:'Praktičnost',hi:'Zvídavost',
+ t:['Jsi praktick[ý|á], realistick[ý|á] a zakotven[ý|á] v osvědčeném. Dáváš přednost konkrétním věcem před abstraktními teoriemi a jistotě před experimenty. Ceníš si tradic, jasných pravidel a ověřených postupů, díky čemuž jsi spolehliv[ý|á] a efektivní tam, kde se vyplácí zkušenost. Méně tě lákají umění, filozofie či radikální novinky a nové nápady přijímáš spíš opatrně.',
+ 'V otevřenosti vůči zkušenosti jsi vyvážen[ý|á]. Novým věcem se nebráníš, ale nemusíš je vyhledávat za každou cenu. Zvládáš praktické myšlení i trochu fantazie a umíš kombinovat osvědčené s novým.',
+ 'Jsi velmi otevřen[ý|á] novým zkušenostem, zvídav[ý|á] a obdařen[ý|á] bohatou fantazií. Fascinují tě myšlenky, umění, cestování, nové pohledy a souvislosti. Máš bohatý vnitřní svět a často tě napadají originální nápady. Rutina tě nudí a autority nepřijímáš bez otázek. Rizikem je roztěkanost, snění místo konání a nezájem o praktické detaily.'],
+ s:['realismus','praktičnost','vytrvalost v osvědčeném'],w:['menší flexibilita při změnách'],sh:['kreativita','zvídavost','abstraktní myšlení'],wh:['roztěkanost','nuda z rutiny']},
+H:{n:'Poctivost a pokora',d:'Upřímnost, férovost, skromnost, nezájem o status (HEXACO)',lo:'Pragmatismus',hi:'Integrita',
+ t:['Nižší skóre v poctivosti a pokoře ukazuje na pragmatický přístup k pravidlům a statusu. Záleží ti na úspěchu, postavení a materiálních věcech a jsi ochotn[ý|á] taktizovat, abys postoupil[|a] dál. Ve světě obchodu a soutěže to může být výhoda, ale lidé mohou tvé motivy vnímat jako vypočítavé.',
+ 'V poctivosti a pokoře jsi vyvážen[ý|á]. Obvykle jednáš férově, ale nejsi naivní. Občas si realitu přikrášlíš nebo oceníš luxus, jako většina lidí.',
+ 'Jsi upřímn[ý|á], férov[ý|á] a skromn[ý|á]. Manipulace a přetvářka ti jsou cizí, nepotřebuješ se předvádět ani hromadit luxus a lidé ti mohou důvěřovat. Riziko: někdy můžeš být až příliš důvěřiv[ý|á] a neumíš dost „prodat“ sám sebe [sám|sama].'],
+ s:['pragmatismus','orientace na výsledek'],w:['může trpět důvěra druhých'],sh:['integrita','férovost','skromnost'],wh:['naivita vůči manipulátorům']}
+};
+const DT={M:{n:'Machiavelismus',t:['Manipulativní strategie ti nejsou blízké. Ve vztazích preferuješ otevřenost před taktizováním.','Máš běžnou míru strategického myšlení. Umíš být diplomatick[ý|á] a chytře volit, co komu řekneš, aniž bys lidi zneužíval[|a].','Máš výrazný sklon ke strategickému, kalkulujícímu myšlení. Vztahy vnímáš i jako hru vlivu a umíš toho využít. V politice, vyjednávání nebo byznysu to může pomáhat, ale výrazné hodnoty dlouhodobě narušují důvěru a blízkost.']},
+X:{n:'Narcismus',t:['Nepotřebuješ obdiv druhých a nemáš potřebu se předvádět. Pozor jen, ať nejsi až příliš skromn[ý|á] a nezapadneš.','Máš zdravou míru sebevědomí a potřeby uznání – takovou, která ti pomáhá prosadit se.','Máš silnou potřebu obdivu, uznání a výjimečnosti. Zdravý narcismus pomáhá k sebeprosazení a charismatu, vyšší míra ale bývá spojena s přecitlivělostí na kritiku, soutěžením ve vztazích a pocitem nároku na zvláštní zacházení.']},
+P:{n:'Psychopatie (subklinická)',t:['Jsi citliv[ý|á] k pocitům druhých a impulzivní riskování ti není vlastní.','Máš běžnou míru vyhledávání vzrušení a tvrdosti. Umíš být nekompromisní, když je to potřeba.','Máš zvýšený sklon k impulzivitě, hledání vzrušení a nižší citlivosti k pocitům druhých. Taková povaha zvládá krize a tlak bez paniky, ale nese riziko bezohlednosti, konfliktů a rozhodnutí, kterých lze později litovat.']}};
+
+const ARCH={
+'HHHH':['Mentor','Inspirativní, laskavý a spolehlivý člověk, který umí lidi nadchnout i dovést k cíli.'],
+'HHHL':['Nadšený bohém','Kreativní, společenská a srdečná duše, která žije přítomností a novými zážitky.'],
+'HHLH':['Vizionářský stratég','Cílevědomý a sebejistý tvůrce, který myslí ve velkém a nebojí se jít proti proudu.'],
+'HHLL':['Provokatér a dobrodruh','Zvídavý, odvážný rebel, který potřebuje volnost, akci a intelektuální výzvy.'],
+'HLHH':['Pečující organizátor','Společenský a spolehlivý člověk, který drží komunitu pohromadě a stará se o druhé.'],
+'HLHL':['Společenský pohodář','Přátelská a bezprostřední povaha, se kterou je dobře a která si umí užívat života.'],
+'HLLH':['Rozhodný manažer','Přímočarý, výkonný a praktický člověk, který věci dotahuje a nebojí se rozhodnout.'],
+'HLLL':['Akční bojovník','Energický, přímý a spontánní člověk, který jedná rychle a nebere si servítky.'],
+'LHHH':['Moudrý rádce','Tichý, přemýšlivý a laskavý člověk s hlubokým vnitřním světem a velkou spolehlivostí.'],
+'LHHL':['Snivý umělec','Citlivá, imaginativní a jemná duše, která vnímá svět intenzivněji než ostatní.'],
+'LHLH':['Analytický architekt','Nezávislý, precizní myslitel, který rád rozebírá složité systémy a hledá logiku.'],
+'LHLL':['Nezávislý myslitel','Originální individualista, který jde svou cestou a nedá na konvence.'],
+'LLHH':['Věrný strážce','Skromný, spolehlivý a loajální člověk, opora rodiny i týmu.'],
+'LLHL':['Klidný pozorovatel','Mírná, nenáročná a tolerantní povaha, která nepotřebuje být v centru dění.'],
+'LLLH':['Precizní realista','Věcný, střízlivý a pečlivý člověk, který se spoléhá na fakta a vlastní úsudek.'],
+'LLLL':['Samostatný nezávislák','Rezervovaný člověk, který se nejraději spoléhá jen sám na sebe a žije podle svého.']
+};
+const TEMP={
+ sang:['Sangvinik','stabilní extravert','Společenský, optimistický, živý a přizpůsobivý. Snadno navazuje kontakty, rychle zapomíná na nepříjemnosti a do nových věcí se pouští s nadšením. Slabinou bývá povrchnost a menší vytrvalost.'],
+ chol:['Cholerik','labilní extravert','Energický, vášnivý, akční a vznětlivý. Silně prožívá emoce, rychle se nadchne i rozčílí. Má velký motor a vůdčí sílu, ale také sklon k impulzivitě a podrážděnosti.'],
+ fleg:['Flegmatik','stabilní introvert','Klidný, rozvážný, vyrovnaný a spolehlivý. Nenechá se snadno rozhodit, jedná promyšleně a vytrvale. Slabinou bývá pomalejší reakce na změny a menší iniciativa.'],
+ mel:['Melancholik','labilní introvert','Citlivý, hloubavý, svědomitý a vnímavý. Prožívá věci do hloubky, má smysl pro detail i krásu, ale sklon k obavám, sebekritice a pesimismu.']
+};
+const RIASEC={R:['Realistický (technika, řemeslo)','technik, inženýr, mechanik, správce IT, stavař, pilot, zemědělec'],I:['Badatelský (analýza, věda)','vědec, datový analytik, programátor, lékař, výzkumník, inženýr vývoje'],A:['Umělecký (tvorba)','designér, architekt, spisovatel, hudebník, fotograf, herec, UX designér'],S:['Sociální (pomoc lidem)','učitel, psycholog, zdravotník, sociální pracovník, trenér, kouč'],E:['Podnikavý (vliv, vedení)','manažer, obchodník, podnikatel, právník, marketér, projektový vedoucí'],C:['Konvenční (řád, data)','účetní, kontrolor kvality, logistik, analytik procesů, plánovač, úředník']};
+const FIELD2R={tech:'RI',sci:'I',hum:'SA',art:'A',eco:'EC',soc:'S',craft:'R',other:''};
+const TREE_I={
+ dub:'<b>Mohutný listnatý strom</b> se v tradiční interpretaci spojuje se silou, stabilitou a sebevědomím. Široká koruna znamená bohatý vnitřní život, ambice a potřebu „poskytovat stín“, tedy chránit druhé. Je to volba lidí, kteří mají pocit, že stojí pevně na zemi.',
+ topol:'<b>Vysoký štíhlý strom</b> symbolizuje touhu po růstu, ambice a orientaci vzhůru – k ideálům, výkonu, uznání. Úzká koruna může ukazovat na převahu rozumu nad citem a určitou zdrženlivost v projevech.',
+ holy:'<b>Strom bez listí</b> se tradičně čte jako období přechodu, vnitřní vyčerpanosti nebo citové zdrženlivosti – „zima“, která čeká na jaro. Může jít i o realistický, nepřikrášlený pohled na sebe. Pokud se v tom poznáváš, stojí za to zeptat se, co tě teď vysiluje.',
+ smrk:'<b>Jehličnan</b> bývá spojován s disciplínou, sebeovládáním, tradicí a jistou obranností – ostré jehlice chrání. Lidé, kteří volí tento strom, si často drží odstup, jsou přesní, kritičtí a vytrvalí.',
+ jablon:'<b>Ovocný strom s plody</b> značí potřebu vidět výsledky své práce, produktivitu, štědrost a pečovatelskou roli. Někdy také touhu být za své „plody“ oceňován[|a].',
+ vrba:'<b>Smuteční vrba</b> se spojuje s citlivostí, empatií, nostalgií a sklonem k melancholii. Je to volba lidí s bohatým citovým životem, kteří snadno vnímají náladu druhých.',
+ stromek:'<b>Malý stromek</b> se tradičně vykládá jako skromnost, pocit „ještě rostu“, mladistvost – nebo naopak jako pocit menší hodnoty a potřeba ochrany. Záleží na tom, jestli ho vnímáš jako nadějný, nebo křehký.'};
+const ROOT_I={strong:'Mohutné kořeny ukazují na silné pouto k rodině, minulosti a vlastním instinktům, ale někdy i na potřebu se něčeho pevně držet.',hint:'Naznačené kořeny jsou nejběžnější volbou a značí zdravé, nevtíravé zakotvení.',none:'Strom bez kořenů může značit, že o svých kořenech (původu, rodině) moc nepřemýšlíš, nebo že ses od nich vědomě vzdálil[|a].',float:'„Vznášející se“ strom se tradičně spojuje s pocitem nezakotvenosti, nejistoty nebo snahou uniknout realitě do představ.'};
+const TRUNK_I={straight:'Rovný, hladký kmen značí stabilní a soudržné já a přímočarost.',thick:'Mohutný kmen ukazuje na velkou vitalitu, sílu ega a potřebu působit silně.',scar:'Jizvy a dutiny se v Kochově tradici čtou jako stopy prožitých zranění nebo krizí, které jsou stále součástí tvého příběhu. (Takzvaný Wittgensteinův index dokonce odhaduje věk, kdy k zranění došlo, podle výšky jizvy na kmeni.)',bent:'Zakřivený kmen se spojuje s přizpůsobivostí, ale i s pocitem, že tě život „ohýbal“ vnějšími tlaky.'};
+const POS_I={left:'Umístění vlevo se tradičně pojí s orientací na minulost, introverzí a vazbou k matce či domovu.',center:'Umístění uprostřed značí vyrovnanost a potřebu mít věci pod kontrolou.',right:'Umístění vpravo ukazuje na orientaci do budoucnosti, na aktivitu a vnější svět.',small:'Malý strom u okraje bývá spojován se stažením, potřebou bezpečí nebo skromností.',big:'Strom přesahující papír značí velké ambice, expanzivitu a někdy i potíže s hranicemi.'};
+const WEATHER_I={sun:'Slunce kolem stromu naznačuje optimismus a pocit podpory.',rain:'Déšť a mraky mohou odrážet aktuální smutek či zátěž, ale déšť je také to, co strom živí.',wind:'Vítr ohýbající větve ukazuje na vnímaný tlak okolí nebo vnitřní neklid.',night:'Noc a hvězdy se pojí s introspekcí, romantikou a hloubavostí.',nothing:'Samotný strom bez okolí značí soustředění na sebe, nezávislost, ale i určitou osamělost.',people:'Život kolem stromu značí silnou orientaci na vztahy a sounáležitost.'};
+const CF={modra:'Modrá jako oblíbená barva vyjadřuje (podle Lüschera) potřebu klidu, harmonie, bezpečí a hlubokých, věrných vztahů.',zelena:'Zelená vyjadřuje potřebu sebeprosazení, stability a uznání, vytrvalost a touhu mít věci pod kontrolou.',cervena:'Červená vyjadřuje vitalitu, touhu po akci, úspěchu a intenzivních zážitcích.',zluta:'Žlutá vyjadřuje optimismus, touhu po změně, svobodě a nových možnostech, orientaci na budoucnost.',fialova:'Fialová vyjadřuje touhu po okouzlení, magii a výjimečnosti, intuici a citlivost.',hneda:'Hnědá vyjadřuje potřebu fyzického pohodlí, odpočinku, bezpečí a zakořenění – často při únavě.',cerna:'Černá jako oblíbená barva vyjadřuje vzdor, protest a odmítání stavu věcí („tak to nechci“).',seda:'Šedá vyjadřuje potřebu odstupu, neutrality a ochrany před přílišnými podněty.'};
+const CR={modra:'Odmítaná modrá naznačuje neklid a možnou nespokojenost v oblasti klidu a blízkosti.',zelena:'Odmítaná zelená ukazuje na frustraci z nedostatku uznání nebo na únavu z neustálého prosazování.',cervena:'Odmítaná červená ukazuje na přetížení, podrážděnost nebo snahu vyhnout se dalším nárokům a konfliktům.',zluta:'Odmítaná žlutá naznačuje zklamání, skepsi a nedůvěru k novým nadějím.',fialova:'Odmítaná fialová značí potřebu racionality a odmítání iluzí – jde o běžnou volbu.',hneda:'Odmítaná hnědá značí snahu vyniknout nad běžnost a potlačování potřeby odpočinku.',cerna:'Odmítaná černá je nejčastější volba a značí přirozenou potřebu nevzdávat se a mít věci pod vlastní kontrolou.',seda:'Odmítaná šedá ukazuje na touhu být zapojen[ý|á] a nezůstávat stranou.'};
+const CUBE={tiny:'Malá kostka = skromné sebepojetí, možná podceňuješ sám sebe [sám|sama].',mid:'Středně velká kostka = realistické, vyrovnané sebevědomí.',huge:'Obří kostka = silné ego a velké sebevědomí.',glass:'Skleněná kostka = jsi otevřen[ý|á] a čitelný/á, nemáš tajemství.',stone:'Kamenná kostka = jsi uzavřenější, chráníš svůj vnitřní svět.',metal:'Kovová kostka = navenek odrážíš, co druzí chtějí vidět, své já si chráníš.',wood:'Dřevěná kostka = jsi přirozen[ý|á], hřejiv[ý|á] a přístupn[ý|á].',tied:'Kůň (symbol partnera) uvázaný u kostky = ve vztahu potřebuješ jistotu a blízkost.',near:'Kůň volně poblíž = vztah založený na důvěře a svobodě.',far:'Kůň daleko = potřeba nezávislosti nebo partner/ka, který/á je ti teď vzdálen[ý|á].',none:'Žádný kůň = vztahy teď nejsou tvou prioritou.',sfar:'Bouře daleko = problémy vnímáš jako vzdálené a zvladatelné.',coming:'Blížící se bouře = něco tě znepokojuje a čekáš to.',over:'Bouře nad kostkou = cítíš se teď hodně zatížen[ý|á] problémy.',snone:'Žádná bouře = jsi v období klidu nebo problémy vytěsňuješ.'};
+
+/* ===================== RESULTS ===================== */
+function compute(){
+ const r={};['E','A','C','N','O','H','M','X','P'].forEach(s=>{r[s]=pct(s);r[s+'m']=mean(s,mainItems)});
+ r.AX=mean('AX',relItems);r.AV=mean('AV',relItems);r.R=mean('R',relItems);r.L=mean('L',mainItems);
+ const a=S.answers;r.D=a.d0+a.d1;r.Gs=a.d2+a.d3;r.PHQ=r.D+r.Gs;
+ // validity
+ const lv=ALL.filter(x=>x.type==='lik').map(x=>a[x.id]);const cnt=[0,0,0,0,0,0];lv.forEach(v=>cnt[v]++);r.mode=Math.max(...cnt)/lv.length;
+ let inc=0;['pE','pA','pC','pN','pO'].forEach(t=>{const p=mainItems.filter(x=>x.p===t);const v=p.map(x=>x.k===1?a[x.id]:6-a[x.id]);if(Math.abs(v[0]-v[1])>=3)inc++});r.inc=inc;
+ r.secs=S.end&&S.start?(S.end-S.start)/1000:999;r.spi=r.secs/ALL.length;
+ return r;
+}
+function meter(p,c){return `<div class="meter"><i style="width:${p}%;background:${c||'var(--acc)'}"></i><b style="left:calc(${p}% - 1px)"></b></div>`}
+function radar(r){
+ const ks=['E','A','C','O','H','N'],lab=['Extraverze','Přívětivost','Svědomitost','Otevřenost','Poctivost','Neuroticismus'];
+ const cx=170,cy=150,R=105;const pt=(i,v)=>{const a=-Math.PI/2+i*2*Math.PI/ks.length;return [cx+Math.cos(a)*R*v/100,cy+Math.sin(a)*R*v/100]};
+ let g='';[25,50,75,100].forEach(l=>{g+=`<polygon points="${ks.map((k,i)=>pt(i,l).join(',')).join(' ')}" fill="none" stroke="#e2d8c7" stroke-width="1"/>`});
+ ks.forEach((k,i)=>{const [x,y]=pt(i,100);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e2d8c7"/>`;const [lx,ly]=pt(i,124);g+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="#555" font-family="Inter">${lab[i]}</text>`});
+ const poly=ks.map((k,i)=>pt(i,r[k]).join(',')).join(' ');
+ g+=`<polygon points="${poly}" fill="rgba(47,93,98,.22)" stroke="#2f5d62" stroke-width="2.5"/>`;
+ ks.forEach((k,i)=>{const [x,y]=pt(i,r[k]);g+=`<circle cx="${x}" cy="${y}" r="4" fill="#2f5d62"/>`});
+ return `<svg viewBox="0 0 340 300" width="420">${g}</svg>`;
+}
+function ipc(r){
+ // dominance ~ E + (100-A)*.3 , warmth ~ A
+ const dom=Math.max(2,Math.min(98,r.E*.7+(100-r.A)*.15+r.X*.15)),warm=Math.max(2,Math.min(98,r.A*.75+r.E*.25));
+ const x=20+warm/100*260,y=280-dom/100*260;
+ return {dom,warm,svg:`<svg viewBox="0 0 300 300" width="300"><circle cx="150" cy="150" r="130" fill="#faf6ef" stroke="#e2d8c7"/><line x1="20" y1="150" x2="280" y2="150" stroke="#d9cfbd"/><line x1="150" y1="20" x2="150" y2="280" stroke="#d9cfbd"/>
+ <g font-family="Inter" font-size="11" fill="#777" text-anchor="middle"><text x="150" y="14">DOMINANCE</text><text x="150" y="296">SUBMISIVITA</text><text x="14" y="154" transform="rotate(-90 14 150)">CHLAD</text><text x="290" y="154" transform="rotate(90 290 150)">VŘELOST</text>
+ <text x="80" y="80">rivalita</text><text x="222" y="80">vedení, péče</text><text x="80" y="228">odstup, tichost</text><text x="222" y="228">ústupnost, přizpůsobení</text></g>
+ <circle cx="${x}" cy="${y}" r="9" fill="#b8603e" stroke="#fff" stroke-width="3"/></svg>`};
+}
+function renderResults(){
+ const r=compute(),p=S.profile;const nm=p.name||'';const g=p.gender;
+ const key=['E','O','A','C'].map(k=>r[k]>=50?'H':'L').join('');const ar=ARCH[key];
+ const nmod=r.N>=65?'citlivá varianta':r.N<=35?'vyrovnaná varianta':'';
+ const tk=r.E>=50?(r.N>=50?'chol':'sang'):(r.N>=50?'mel':'fleg');const tp=TEMP[tk];
+ const order=['O','C','E','A','N'];
+ const sorted=[...order,'H'].map(k=>({k,d:Math.abs(r[k]-50)})).sort((a,b)=>b.d-a.d);
+ // strengths & growth
+ const str=[],grow=[];
+ ['E','A','C','O','H'].forEach(k=>{const l=tri(r[k]);if(l===2){str.push(...TR[k].sh.slice(0,2));grow.push(TR[k].wh[0])}if(l===0){str.push(TR[k].s[0]);grow.push(...TR[k].w.slice(0,1))}});
+ if(tri(r.N)===0)str.push(...TR.N.s.slice(0,2));if(tri(r.N)===2){str.push(TR.N.sh[0]);grow.push(...TR.N.wh)}
+ // RIASEC
+ const ri={R:(100-r.E)*.3+r.C*.3+(100-r.N)*.2+(100-r.O)*.2,I:r.O*.5+(100-r.E)*.3+r.C*.2,A:r.O*.6+(100-r.C)*.2+r.N*.2,S:r.A*.5+r.E*.3+r.H*.2,E:r.E*.4+(100-r.A)*.2+r.C*.2+(100-r.N)*.2,C:r.C*.5+(100-r.O)*.3+(100-r.N)*.2};
+ const top=Object.entries(ri).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+ const fl=FIELD2R[p.field]||'';const fit=fl&&[...fl].some(c=>top.includes(c));
+ // attachment
+ const ax=r.AX>=3,av=r.AV>=3;
+ const att=!ax&&!av?['Jistá vazba','Ve vztazích se cítíš převážně bezpečně. Zvládáš blízkost i samostatnost, umíš důvěřovat a nebojíš se, že o druhé přijdeš. Jistá vazba je nejlepším předpokladem stabilních a spokojených vztahů a pomáhá i při zvládání stresu.','ok']
+  :ax&&!av?['Úzkostná vazba','Blízkost chceš a potřebuješ, ale provází ji obava, že o lásku či přízeň druhých přijdeš. Můžeš potřebovat častější ujištění, citlivě vnímáš náznaky odmítnutí a v nejistotě máš sklon „přitahovat“ partnera víc k sobě. Pomáhá ujasňovat si vlastní hodnotu nezávisle na druhých a otevřeně komunikovat potřeby.','w']
+  :!ax&&av?['Vyhýbavá vazba','Ceníš si nezávislosti a soběstačnosti. Citová blízkost a závislost na druhých ti mohou být nepříjemné, takže si nevědomky držíš odstup, i když vztah funguje. Pro partnery můžeš působit chladněji, než ve skutečnosti jsi. Pomáhá postupně riskovat malé kroky otevřenosti.','w']
+  :['Ustrašená (dezorganizovaná) vazba','Po blízkosti toužíš, a zároveň se jí bojíš. Můžeš střídat potřebu splynout s potřebou utéct, což vztahy komplikuje. Tento vzorec často souvisí se staršími zkušenostmi s nespolehlivou blízkostí a velmi dobře na něj působí psychoterapie.','w'];
+ const rse=r.R<2.6?['nízké','Tvé sebehodnocení vychází nízko. Máš sklon pochybovat o své hodnotě a schopnostech, což může brzdit tvé rozhodování, vztahy i pracovní růst. Sebehodnocení není pevná vlastnost a dá se posilovat – pomáhá všímat si konkrétních úspěchů, omezit srovnávání s druhými a pracovat s vnitřním kritikem.','w']:r.R<3.9?['přiměřené','Tvé sebehodnocení je přiměřené – vážíš si sebe, ale vidíš i své slabiny. To je zdravý základ, který umožňuje přijímat kritiku a růst.','ok']:['vysoké','Máš k sobě velmi pozitivní vztah a důvěřuješ svým schopnostem. To je silný ochranný faktor pro duševní zdraví. (Pokud zároveň vychází vysoký narcismus, stojí za to rozlišovat zdravou sebeúctu od potřeby obdivu.)','ok'];
+ // flags
+ const flags=[];
+ if(r.N>=85)flags.push(['Výrazná emoční citlivost / labilita','Tvé skóre neuroticismu patří mezi nejvyšších 15 %. Lidé s tímto profilem mají vyšší riziko úzkostných a depresivních stavů a vyhoření, zvlášť v dlouhodobém stresu.']);
+ if(r.C>=75&&r.N>=65)flags.push(['Riziko perfekcionismu a vyhoření','Kombinace vysoké svědomitosti a citlivosti na stres vytváří vysoké nároky a strach ze selhání. Hlídej si odpočinek a hranice.']);
+ if(r.A>=80&&r.N>=65)flags.push(['Sklon „vyhovět všem“ (people-pleasing)','Vysoká vstřícnost a citlivost mohou vést k potlačování vlastních potřeb a k vyčerpání ze starostí o druhé.']);
+ if(r.C<=20&&(r.P>=70||r.N>=70))flags.push(['Impulzivita','Nízká sebekontrola spojená s '+(r.P>=70?'hledáním vzrušení':'emoční labilitou')+' zvyšuje riziko impulzivních rozhodnutí (utrácení, riskování, závislostní chování).']);
+ if(r.E<=10&&av)flags.push(['Sociální stažení','Velmi nízká extraverze spolu s vyhýbáním se blízkosti může vést k izolaci. Introverze je v pořádku, ale alespoň pár blízkých vztahů je pro psychiku zásadních.']);
+ if(r.M>=85)flags.push(['Výrazný machiavelismus','Sklon k manipulaci a strategickému využívání druhých je výrazně nad průměrem.']);
+ if(r.X>=85)flags.push(['Výrazné narcistické rysy','Potřeba obdivu a výjimečnosti je výrazně nad průměrem. Hlídej si, jak reaguješ na kritiku a jestli vztahy nejsou soutěží.']);
+ if(r.P>=85)flags.push(['Výrazné psychopatické rysy','Nízká lítost, tvrdost a riskování jsou výrazně nad průměrem. Ve vyšší míře to může poškozovat vztahy i vést k rizikovému chování.']);
+ if(ax&&r.AX>=4)flags.push(['Silná vztahová úzkost','Strach z opuštění je u tebe výrazný a může zásadně ovlivňovat spokojenost ve vztazích.']);
+ if(r.R<2.3)flags.push(['Nízké sebehodnocení','Výrazně negativní pohled na sebe je rizikovým faktorem pro depresivní ladění.']);
+ // validity
+ const val=[];
+ if(r.L>=4)val.push('Na kontrolní otázky (např. „nikdy jsem nezalhal[|a]“) jsi odpovídal[|a] velmi kladně. Může to znamenat snahu ukázat se v lepším světle. Výsledky v oblasti morálky a temné triády proto ber s rezervou.');
+ if(r.inc>=2)val.push(`U ${r.inc} párů opačných výroků jsi odpověděl[|a] protichůdně. Možná jsi odpovídal[|a] rychle nebo nepozorně.`);
+ if(r.mode>.6)val.push('Velkou část odpovědí jsi dal[|a] stejnou volbou. Profil tak může být méně přesný.');
+ if(r.spi<2.5)val.push('Test jsi vyplnil[|a] velmi rychle (méně než 2,5 s na otázku). Výsledky mohou být méně přesné.');
+ const valOk=val.length===0;
+ // phq
+ let phq;
+ if(r.PHQ>=6||r.D>=3||r.Gs>=3){phq=['Zvýšené','w',`Tvé odpovědi (skóre ${r.PHQ}/12${r.D>=3?', depresivní subškála pozitivní':''}${r.Gs>=3?', úzkostná subškála pozitivní':''}) naznačují, že se poslední dobou necítíš dobře. Nejde o diagnózu, ale je to signál, který stojí za pozornost. Doporučujeme probrat to s praktickým lékařem, psychologem nebo psychoterapeutem. Pokud je ti hodně těžko, můžeš kdykoli zavolat na <b>Linku první psychické pomoci 116 123</b> (nonstop, zdarma). Česká republika má také síť <b>Center duševního zdraví</b> a mnoho pojišťoven přispívá na terapii.`]}
+ else if(r.PHQ>=3)phq=['Mírné','w',`Skóre ${r.PHQ}/12 ukazuje na mírnou zátěž – občasný stres či únavu, jakou zná většina lidí. Pokud by to trvalo déle nebo se zhoršovalo, neváhej si o tom promluvit s někým blízkým nebo s odborníkem.`];
+ else phq=['V normě','ok',`Skóre ${r.PHQ}/12 – v posledních dvou týdnech nevykazuješ známky výraznější úzkosti ani deprese.`];
+ const ip=ipc(r);
+ const ipcTxt=ip.dom>=55&&ip.warm>=55?'Ve vztazích s lidmi působíš jako <b>vřelý lídr</b> – přebíráš iniciativu, ale s ohledem na druhé. Lidé tě často vnímají jako přirozenou autoritu, ke které se dá obrátit.':ip.dom>=55?'Ve vztazích s lidmi zaujímáš spíš <b>dominantní a soutěživou pozici</b> – prosazuješ se, jdeš si za svým a nebojíš se konfrontace. Respekt si získáváš snadno, blízkost hůř.':ip.warm>=55?'Ve vztazích s lidmi jsi spíš <b>vřelý a přizpůsobivý</b> – podporuješ, nasloucháš a necháváš prostor druhým. Pozor, ať tvé potřeby nezapadnou.':'Ve vztazích s lidmi jsi spíš <b>rezervovaný a nezávislý</b> – nepotřebuješ vést ani se zalíbit, držíš si odstup a jednáš věcně.';
+ // combos
+ const combos=[];
+ if(r.O>=65&&r.C<=40)combos.push('<b>Kreativní chaos:</b> vysoká otevřenost a nižší svědomitost tě dělají nápaditým, ale nápady často zůstávají nedokončené. Pomůže ti partner nebo systém, který je dotáhne.');
+ if(r.O>=65&&r.C>=65)combos.push('<b>Tvůrčí realizátor:</b> umíš nápady nejen vymýšlet, ale i dotahovat – vzácná a velmi ceněná kombinace.');
+ if(r.E>=65&&r.A<=40)combos.push('<b>Přirozená dominance:</b> energie a přímost z tebe dělají výrazného lídra, ale hrozí, že budeš ostatní válcovat.');
+ if(r.E<=35&&r.O>=65)combos.push('<b>Tichá hloubka:</b> introverze a otevřenost dávají bohatý vnitřní svět – typické pro výzkumníky, spisovatele a vývojáře.');
+ if(r.A>=65&&r.H>=65)combos.push('<b>Dobrý člověk v pravém smyslu:</b> laskavost spojená s poctivostí – lidé ti instinktivně věří.');
+ if(r.A<=35&&r.H<=35)combos.push('<b>Tvrdý vyjednavač:</b> nízká přívětivost a pragmatický vztah k pravidlům – efektivní v byznysu, ale riziko pro důvěru ve vztazích.');
+ if(r.N<=35&&r.C>=65)combos.push('<b>Odolný a výkonný:</b> klid pod tlakem a disciplína – profil, který dobře zvládá náročné a odpovědné role.');
+ if(r.N>=65&&r.O>=65)combos.push('<b>Citlivý tvůrce:</b> intenzivní prožívání a fantazie jsou palivem pro umění i empatii, ale potřebují bezpečný ventil.');
+ // relationships text
+ const relTxt=[];
+ relTxt.push(r.A>=65?'Ve vztazích jsi pozorn[ý|á], obětav[ý|á] a snažíš se vycházet vstříc.':r.A<=35?'Ve vztazích jsi přím[ý|á] a nezávisl[ý|á] a nebojíš se konfliktu. Partner/ka by měl[|a] snést upřímnost.':'Ve vztazích umíš vyvažovat vstřícnost a vlastní potřeby.');
+ relTxt.push(r.N>=65?'Silně prožíváš emoce, a tak se ve vztazích můžou objevovat žárlivost, obavy nebo citlivost na kritiku. Pomáhá klidný, předvídatelný partner.':r.N<=35?'Do vztahu přinášíš klid a stabilitu, což partnera uklidňuje.':'');
+ relTxt.push(r.E>=65?'Potřebuješ společný sociální život a sdílení zážitků.':r.E<=35?'Potřebuješ ve vztahu prostor pro sebe a klidné chvíle ve dvou spíš než hlučné akce.':'');
+ if(p.rel==='single'&&av)relTxt.push('Jako nezadan[ý|á] s vyhýbavějším stylem vazby se můžeš blízkosti nevědomky bránit, i když po ní toužíš.');
+ if((p.rel==='rel'||p.rel==='mar')&&ax)relTxt.push('V současném vztahu ti může pomoct otevřeně mluvit o potřebě ujištění, místo abys ji skrýval[|a].');
+ // work text
+ const workTxt=[];
+ workTxt.push(r.C>=65?'V práci jsi spolehliv[ý|á] a pečliv[ý|á] a dotahuješ věci. Vyhovuje ti jasná struktura a cíle.':r.C<=35?'V práci ti vyhovuje volnost, rozmanitost a krátké intenzivní projekty víc než rutina a byrokracie.':'V práci zvládáš strukturu i improvizaci.');
+ workTxt.push(r.E>=65?'Kontakt s lidmi, týmová práce a prezentování tě nabíjí.':r.E<=35?'Nejlépe ti jde soustředěná samostatná práce bez neustálých porad a vyrušování.':'');
+ workTxt.push(r.O>=65?'Potřebuješ, aby práce byla intelektuálně podnětná a dávala prostor novým nápadům.':r.O<=35?'Ceníš si stabilní, prakticky zaměřené práce s ověřenými postupy.':'');
+ if(p.job==='vedouci')workTxt.push(r.E>=50&&r.N<50?'Pro vedoucí roli máš dobré předpoklady (energie a stabilita).':'Ve vedoucí roli může být tvou výzvou '+(r.E<50?'energie potřebná pro neustálou komunikaci':'zvládání stresu')+'; vyplatí se na tom vědomě pracovat.');
+ // stress text
+ const stressTxt=r.N>=65?'Pod stresem máš tendenci k obavám, přemýšlení dokola a podrážděnosti. '+(r.C>=60?'Často se snažíš situaci zvládnout zvýšeným úsilím a kontrolou, což vede k vyčerpání.':'Někdy pak věci odkládáš nebo se jim vyhýbáš.')+' Doporučení: pravidelný pohyb, spánek, dechová cvičení, oddělování „co můžu ovlivnit“ od „co ne“.':r.N<=35?'Stres zvládáš výborně a v krizích býváš tím, kdo zachová chladnou hlavu. Dávej si ale pozor, ať nepřehlížíš varovné signály těla a únavy.':'Stres zvládáš průměrně dobře. Krátkodobý tlak tě spíš mobilizuje, dlouhodobý tě ale může vyčerpat. Pomáhají jasné hranice mezi prací a odpočinkem.';
+ const a=S.answers;
+ const extremes=mainItems.filter(x=>x.s!=='L'&&a[x.id]===5).slice(0,6);
+ const intro=`${nm?nm+', ':''}${G(p.gender==='f'?'žena':p.gender==='m'?'muž':'osoba')} ve věku ${p.age} let.`;
+ const ageNote=p.age<25?'V tvém věku se osobnost ještě výrazně vyvíjí – v příštích letech obvykle roste svědomitost a emoční stabilita.':p.age>=40?'Osobnost bývá v tvém věku poměrně stabilní, změny probíhají pomalu (typicky mírně roste přívětivost a klesá neuroticismus).':'Osobnost je ve tvém věku už poměrně ustálená, ale stále se mírně vyvíjí – obvykle směrem k vyšší stabilitě a svědomitosti („princip zrání“).';
+ const summary=G(`${ar[1]} ${tp[0]} podle temperamentu. Tvé nejvýraznější rysy jsou ${sorted.slice(0,3).map(x=>(x.k==='N'?(r.N>=50?'vysoká citlivost na stres':'vysoká emoční stabilita'):(r[x.k]>=50?'vysoká ':'nízká ')+TR[x.k].n.toLowerCase())).join(', ')}.`);
+ const T=s=>G(s);
+ let h=`<div class="card arche"><div class="k">Tvůj osobnostní profil</div><h1>${ar[0]}</h1><div class="k" style="text-transform:none;letter-spacing:0">${nmod?nmod+' · ':''}temperament: ${tp[0]}</div><p>${T(ar[1])}</p></div>
+ <div class="card"><p class="muted small" style="margin:0">${T(intro)} Porovnání s orientačními normami pro ${p.gender==='f'?'ženy':p.gender==='m'?'muže':'populaci'} podobného věku.</p>
+ <div class="toc"><a href="#s-big5">Velká pětka</a><a href="#s-temp">Temperament</a><a href="#s-ipc">Mezilidské vztahy</a><a href="#s-att">Citová vazba</a><a href="#s-dark">Stinné stránky</a><a href="#s-mood">Psychická pohoda</a><a href="#s-risk">Rizikové vzorce</a><a href="#s-work">Práce a kariéra</a><a href="#s-proj">Projektivní testy</a><a href="#s-val">Validita</a></div></div>
+ <div class="card"><h2>Shrnutí</h2><p>${summary}</p><p>${T(ageNote)}</p>
+ <div class="chart">${radar(r)}</div><p class="small muted" style="text-align:center">Percentily: 50 = průměr populace. Neuroticismus: vyšší hodnota = vyšší citlivost na stres.</p>
+ <div class="two"><div class="box"><b>Silné stránky</b><ul class="cl">${[...new Set(str)].slice(0,7).map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="box"><b>Na čem pracovat</b><ul class="cl">${[...new Set(grow)].slice(0,6).map(x=>`<li>${x}</li>`).join('')||'<li>Žádná výrazná slabá místa – profil je vyrovnaný.</li>'}</ul></div></div></div>
+ <div class="card" id="s-big5"><h2>Velká pětka + HEXACO</h2><p class="muted">Model Big Five popisuje pět základních dimenzí osobnosti, které jsou do velké míry dědičné a během dospělosti poměrně stabilní. Šestá dimenze pochází z modelu HEXACO.</p>
+ ${[...order,'H'].map(k=>`<div class="trait"><div class="th"><h3>${TR[k].n}</h3><span class="tag ${k==='N'&&r.N>=65?'w':''}">${LVL[lvl(r[k])]} · ${r[k]}. percentil</span></div><div class="small muted">${TR[k].d}</div>${meter(r[k],k==='N'?'#b8603e':null)}<div class="scale"><span>${TR[k].lo}</span><span>${TR[k].hi}</span></div><p>${T(TR[k].t[tri(r[k])])}</p></div>`).join('')}
+ ${combos.length?`<h3>Kombinace rysů</h3><ul class="cl">${combos.map(c=>`<li>${T(c)}</li>`).join('')}</ul>`:''}
+ ${extremes.length?`<h3>Výroky, se kterými jsi rozhodně souhlasil[|a]</h3><ul class="cl">${extremes.map(x=>`<li class="quote">„${T(x.t)}“</li>`).join('')}</ul>`:''}</div>
+ <div class="card" id="s-temp"><h2>Temperament: ${tp[0]}</h2><p class="muted">Podle H. J. Eysencka vzniká temperament kombinací extraverze a emoční (ne)stability – moderní pojetí starého Hippokratova dělení.</p><p><span class="tag">${tp[1]}</span></p><p>${tp[2]}</p>
+ <p class="small muted">Extraverze ${r.E}. percentil · neuroticismus ${r.N}. percentil. ${Math.abs(r.E-50)<10||Math.abs(r.N-50)<10?'Jsi blízko hranice, takže máš rysy i sousedního temperamentu.':''}</p></div>
+ <div class="card" id="s-ipc"><h2>Interpersonální styl</h2><p class="muted">Interpersonální kruh (Leary, Wiggins) mapuje chování k druhým na dvou osách: dominance–submisivita a vřelost–chlad.</p><div class="chart">${ip.svg}</div><p>${T(ipcTxt)}</p>
+ <h3>Ve vztazích</h3><p>${T(relTxt.filter(Boolean).join(' '))}</p></div>
+ <div class="card" id="s-att"><h2>Citová vazba: ${att[0]}</h2><p class="muted">Teorie vazby (Bowlby, Ainsworthová; u dospělých Hazan &amp; Shaver) popisuje, jak prožíváme blízkost. Měří se dvě osy: úzkost z opuštění a vyhýbání se blízkosti.</p>
+ <div class="two"><div><b>Úzkost z opuštění</b>${meter((r.AX-1)/4*100,'#b8603e')}</div><div><b>Vyhýbání se blízkosti</b>${meter((r.AV-1)/4*100,'#7a5b8e')}</div></div>
+ <div class="flag ${att[2]==='ok'?'ok':''}">${T(att[1])}</div>
+ <h3>Sebehodnocení: ${rse[0]}</h3>${meter((r.R-1)/4*100)}<p>${T(rse[1])}</p></div>
+ <div class="card" id="s-dark"><h2>Stinné stránky osobnosti</h2><p class="muted">Temná triáda označuje tři společensky nežádoucí, ale v běžné populaci normálně rozložené rysy. Každý je máme v nějaké míře. Nejde o klinickou diagnózu (např. poruchu osobnosti).</p>
+ ${['M','X','P'].map(k=>`<div class="trait"><div class="th"><h3>${DT[k].n}</h3><span class="tag ${r[k]>=75?'w':''}">${r[k]}. percentil</span></div>${meter(r[k],r[k]>=75?'#b8603e':'#7a8a8c')}<p>${T(DT[k].t[r[k]<35?0:r[k]<75?1:2])}</p></div>`).join('')}</div>
+ <div class="card" id="s-mood"><h2>Aktuální psychická pohoda: ${phq[0]}</h2><p class="muted">PHQ-4 je krátký screeningový nástroj pro úzkost a depresi za poslední 2 týdny.</p>${meter(r.PHQ/12*100,phq[1]==='ok'?'#4f7a4a':'#b8603e')}<div class="flag ${phq[1]==='ok'?'ok':''}">${T(phq[2])}</div>
+ <h3>Jak zvládáš stres</h3><p>${T(stressTxt)}</p></div>
+ <div class="card" id="s-risk"><h2>Rizikové vzorce a odchylky</h2><p class="muted">Kombinace rysů, které podle výzkumu zvyšují riziko psychických obtíží nebo problémů ve vztazích. Nejde o diagnózy – jen o oblasti, kterým stojí za to věnovat pozornost.</p>
+ ${flags.length?flags.map(f=>`<div class="flag"><b>${T(f[0])}</b><br>${T(f[1])}</div>`).join(''):'<div class="flag ok"><b>Žádné výrazné rizikové vzorce.</b><br>Tvé skóre se drží v pásmu, které nenaznačuje zvýšené riziko psychických obtíží ani problematických osobnostních rysů.</div>'}</div>
+ <div class="card" id="s-work"><h2>Práce a kariéra</h2><p>${T(workTxt.filter(Boolean).join(' '))}</p><h3>Nejbližší profesní typy (Hollandův model RIASEC)</h3>
+ ${top.map((t,i)=>`<div class="box" style="margin:8px 0"><b>${i+1}. ${RIASEC[t][0]}</b><div class="small muted">${RIASEC[t][1]}</div></div>`).join('')}
+ ${fl?`<p class="small">${fit?'Tvůj současný obor tomuto profilu <b>dobře odpovídá</b>.':'Tvůj současný obor se s nejvýraznějšími typy úplně nepotkává. Nemusí to být problém, ale pokud tě práce vyčerpává, může to být jeden z důvodů.'}</p>`:''}
+ <p class="small muted">Odhad typů je odvozen z osobnostních rysů, ne z dotazníku zájmů, takže ber jako inspiraci.</p></div>
+ <div class="card" id="s-proj"><h2>Projektivní testy</h2><p class="muted">Projektivní metody pracují se symboly a představami. Jejich interpretace je tradiční a <b>vědecká spolehlivost je nízká</b>. Ber je jako podnět k zamyšlení, ne jako měření.</p>
+ <h3>Baumův test stromu</h3><div class="row" style="align-items:flex-start;flex-wrap:nowrap;gap:16px"><div style="width:110px;flex:none">${TREES[a.tree]}</div><div><p>${T(TREE_I[a.tree])}</p></div></div>
+ <ul class="cl"><li>${T(ROOT_I[a.roots])}</li><li>${T(TRUNK_I[a.trunk])}</li><li>${T(POS_I[a.pos])}</li><li>${T(WEATHER_I[a.weather])}</li></ul>
+ <h3>Lüscherův barevný test</h3><div class="row"><div style="width:44px;height:44px;border-radius:8px;background:${COLORS.find(c=>c[0]===a.cfav)[2]}"></div><div style="flex:1;min-width:200px">${CF[a.cfav]}</div></div>
+ <div class="row" style="margin-top:10px"><div style="width:44px;height:44px;border-radius:8px;background:${COLORS.find(c=>c[0]===a.crej)[2]}"></div><div style="flex:1;min-width:200px">${T(CR[a.crej])}</div></div>
+ ${a.cfav===a.crej?'<p class="small muted">Jako oblíbenou i neoblíbenou jsi zvolil[|a] stejnou barvu, což ukazuje na ambivalentní vztah k tomu, co barva symbolizuje.</p>':''}
+ <h3>Kostka v poušti</h3><ul class="cl"><li>${T(CUBE[a.cube])}</li><li>${T(CUBE[a.mat])}</li><li>${T(CUBE[a.horse])}</li><li>${T(CUBE[a.storm==='far'?'sfar':a.storm==='none'?'snone':a.storm])}</li></ul></div>
+ <div class="card" id="s-val"><h2>Validita odpovědí</h2>${valOk?'<div class="flag ok">Odpovědi působí konzistentně a upřímně, takže profil by měl být spolehlivý.</div>':val.map(v=>`<div class="flag">${T(v)}</div>`).join('')}
+ <p class="small muted">Kontrolní mechanismy: škála sociální žádoucnosti (podle principu L-škály MMPI), ${r.inc} z 5 rozporných párů, ${Math.round(r.mode*100)} % stejných odpovědí, ${r.secs<900?Math.round(r.secs/60)+' min':'—'} celkový čas.</p>
+ <div class="disc">Test slouží k sebepoznání a zábavě. Položky jsou adaptacemi volně dostupných vědeckých dotazníků (IPIP, HEXACO, ECR, RSES, PHQ-4) a normy jsou orientační odhady z publikovaných studií, ne česká standardizace. Výsledek nenahrazuje vyšetření psychologem ani psychiatrem a nemůže stanovit žádnou diagnózu. Pokud tě něco z výsledků znepokojuje, obrať se na odborníka. Linka první psychické pomoci: 116 123.</div>
+ <div class="row" style="margin-top:18px"><button class="btn" id="copy">Zkopírovat výsledky jako text</button><button class="btn ghost" id="redo">Vyplnit znovu</button><button class="btn ghost" id="edit">Upravit odpovědi</button></div></div>`;
+ app.innerHTML=h;
+ $('#redo').onclick=()=>{S={screen:'intro',profile:{},answers:{},page:0,start:null};try{localStorage.removeItem(LS)}catch(e){}saved=null;render();scrollTo(0,0)};
+ $('#edit').onclick=()=>{S.screen='q';S.page=0;save();render();scrollTo(0,0)};
+ $('#copy').onclick=()=>{
+  const lines=[`PSYCHÉ – osobnostní profil${nm?' – '+nm:''}`,`Typ: ${ar[0]}${nmod?' ('+nmod+')':''} · temperament: ${tp[0]}`,G(summary),'',...[...order,'H'].map(k=>`${TR[k].n}: ${r[k]}. percentil (${LVL[lvl(r[k])]})`),'',`Citová vazba: ${att[0]}`,`Sebehodnocení: ${rse[0]}`,`Machiavelismus ${r.M}. / Narcismus ${r.X}. / Psychopatie ${r.P}. percentil`,`PHQ-4: ${r.PHQ}/12 (${phq[0]})`,`Profesní typy: ${top.map(t=>RIASEC[t][0]).join(', ')}`,'',`Rizikové vzorce: ${flags.length?flags.map(f=>G(f[0])).join('; '):'žádné výrazné'}`];
+  const txt=lines.join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Zkopírováno do schránky')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Zkopírováno')}catch(e){toast('Kopírování se nezdařilo')}ta.remove()});
+ };
+}
+render();
+</script>
+</body>
+</html>
