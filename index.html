@@ -799,14 +799,19 @@ async function makePDF(nm){
   [...app.querySelectorAll('.card')].forEach(c=>{if(c.querySelector('.toc'))return;const k=c.cloneNode(true);k.querySelectorAll('.noprint').forEach(x=>x.remove());wrap.appendChild(k)});
   wrap.style.cssText='position:absolute;left:0;top:0;width:760px;background:#fff;z-index:-5';
   document.body.appendChild(wrap);scrollTo(0,0);
-  const blocks=[];[...wrap.children].forEach(el=>{if(el.classList.contains('card')&&!el.classList.contains('arche'))[...el.children].forEach((c,i)=>blocks.push({el:c,gap:i===0?7:2.5}));else blocks.push({el,gap:4})});
   const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4'});const PW=210,PH=297,M=12,CW=PW-2*M,MAXH=PH-2*M-6;let y=M,first=true;
-  for(let i=0;i<blocks.length;i++){
-   btn.textContent=`Připravuji report… ${Math.round(i/blocks.length*90)} %`;
-   const bl=blocks[i];const cv=await html2canvas(bl.el,{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0,logging:false});
-   bl.cv=cv;bl.h=cv.width?cv.height*CW/cv.width:0;
-   bl.head=/^H[23]$/.test(bl.el.tagName)||(bl.el.tagName==='P'&&bl.el.classList.contains('muted')&&i>0&&blocks[i-1].el.tagName==='H2');
+  const blocks=[];const cards=[...wrap.children];
+  const crop=(cv,k,top,h)=>{const t=document.createElement('canvas');t.width=cv.width;t.height=Math.max(1,Math.round(h*k));t.getContext('2d').drawImage(cv,0,Math.round(top*k),cv.width,t.height,0,0,cv.width,t.height);return t};
+  for(let ci=0;ci<cards.length;ci++){
+   btn.textContent=`Připravuji report… ${Math.round(ci/cards.length*95)} %`;
+   const c=cards[ci];c.style.position='relative';
+   const cv=await html2canvas(c,{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0,logging:false,ignoreElements:el=>el.id==='app'||el.id==='toast'});
+   const k=cv.width/c.offsetWidth;
+   if(c.classList.contains('card')&&!c.classList.contains('arche')){
+    const ch=[...c.children];ch.forEach((e,i)=>{const pc=crop(cv,k,e.offsetTop,e.offsetHeight);blocks.push({el:e,cv:pc,h:pc.height*CW/pc.width,gap:i===0?7:2.5})});
+   }else blocks.push({el:c,cv,h:cv.height*CW/cv.width,gap:4});
   }
+  blocks.forEach((bl,i)=>{bl.head=/^H[23]$/.test(bl.el.tagName)||(bl.el.tagName==='P'&&bl.el.classList.contains('muted')&&i>0&&blocks[i-1].el.tagName==='H2')});
   for(let i=0;i<blocks.length;i++){
    const bl=blocks[i],cv=bl.cv,h=bl.h;if(!h)continue;
    if(!first)y+=bl.gap;first=false;
