@@ -102,6 +102,9 @@ table.st th{font-size:12.5px;color:var(--muted);font-weight:600;text-transform:u
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
 .toast.on{opacity:1}
 .mods{columns:2;column-gap:24px;font-size:14.5px}@media(max-width:560px){.mods{columns:1}}
+.report{padding:0}.report .card:not(.arche){border:0;margin:0;padding:0;background:#fff}.report .card.arche{margin:0 0 6px}
+.rep-head{padding:10px 4px 14px;border-bottom:2px solid var(--acc);margin-bottom:8px}
+@media print{body{background:#fff}.noprint,.toc,.prog,.toast{display:none!important}.card{break-inside:auto;border-color:#ddd}.trait,.flag,.box,tr{break-inside:avoid}}
 .mods li{break-inside:avoid;margin:3px 0}
 </style>
 </head>
@@ -332,7 +335,7 @@ const FORM=[
 function renderForm(){
  const p=S.profile;
  app.innerHTML=`<div class="card"><h2>Než začneme</h2><p class="muted">Údaje slouží k porovnání s odpovídající skupinou (pohlaví a věk ovlivňují typické hodnoty) a k přizpůsobení výsledků.</p>
- <div class="grid2"><div><label class="f">Jméno nebo přezdívka <span class="muted">(nepovinné)</span></label><input id="nm" maxlength="30" value="${p.name||''}" placeholder="Např. Fanda"></div>
+ <div class="grid2"><div><label class="f">Jméno nebo přezdívka <span class="muted">(nepovinné)</span></label><input id="nm" maxlength="30" value="${p.name||''}"></div>
  <div><label class="f">Věk</label><input id="age" type="number" min="12" max="99" value="${p.age||''}" placeholder="Např. 32"></div></div>
  ${FORM.map(f=>`<label class="f">${f.l}</label><div class="pills" data-k="${f.k}">${f.o.map(o=>`<button class="pill ${p[f.k]===o[0]?'sel':''}" data-v="${o[0]}">${o[1]}</button>`).join('')}</div>`).join('')}
  <div class="nav"><button class="btn ghost" id="back">← Zpět</button><button class="btn" id="next">Pokračovat k testu →</button></div><p class="small muted" id="err"></p></div>`;
@@ -763,10 +766,18 @@ function renderResults(){
  h+=sec('s-proj','Projektivní úlohy',`<h3 style="margin-top:0">Lüscherův barevný test</h3><div class="row"><div style="width:44px;height:44px;border-radius:8px;flex:none;background:${COLORS.find(c=>c[0]===a.cfav)[2]}"></div><div style="flex:1;min-width:200px">${CF[a.cfav]}</div></div><div class="row" style="margin-top:10px"><div style="width:44px;height:44px;border-radius:8px;flex:none;background:${COLORS.find(c=>c[0]===a.crej)[2]}"></div><div style="flex:1;min-width:200px">${T(CR[a.crej])}</div></div>
  <h3>Kostka v poušti</h3><ul class="cl"><li>${T(CUBE[a.cube])}</li><li>${T(CUBE[a.mat])}</li><li>${T(CUBE[a.horse])}</li><li>${T(CUBE[a.storm==='far'?'sfar':a.storm==='none'?'snone':a.storm])}</li></ul>`,'Projektivní metody mají nízkou vědeckou spolehlivost – ber je jako podnět k zamyšlení.');
  h+=sec('s-val','Validita odpovědí',`${valOk?fl3(0,'Odpovědi působí konzistentně a upřímně, takže profil by měl být spolehlivý.'):val.map(v=>fl3(1,v)).join('')}
- <div class="kpi">${kpi(r.chk===0?'✓':r.chk+'× ✗','kontrolní otázky')}${kpi(r.L.toFixed(1)+'/5','škála lži')}${kpi(r.inc+'/5','rozporné páry')}${kpi(r.latFast?(r.latFast/1000).toFixed(1)+' s':'—','průměrně na otázku')}${kpi(r.secs?Math.round(r.secs/60)+' min':'—','celkový čas')}</div>
+ <table class="st">
+ <tr><th>Ukazatel</th><th>Tvůj výsledek</th><th>Co to znamená</th></tr>
+ <tr><td><b>Škála lži</b></td><td>${tg(r.L>=3.8?2:r.L>=3.2?1:0,r.L.toFixed(1)+' / 5')}</td><td class="small">Pět výroků popisuje nereálnou dokonalost (např. „vždycky ve všem mluvím pravdu“, „mám rád[|a] úplně každého“). Poctivě takhle nikdo nežije, takže upřímní lidé s nimi spíš nesouhlasí. Číslo je průměrná míra souhlasu (1 = vůbec mě nevystihuje, 5 = přesně mě vystihuje). <b>Do 3,1</b> = upřímné odpovědi, <b>3,2–3,7</b> = mírná snaha vypadat dobře, <b>od 3,8</b> = výrazné přikrašlování.</td></tr>
+ <tr><td><b>Rozporné páry</b></td><td>${tg(r.inc>=2?2:r.inc===1?1:0,r.inc+' z 5')}</td><td class="small">V testu je 5 dvojic výroků s opačným významem (např. „Snadno se dostanu do stresu“ × „Většinou jsem uvolněn[ý|á]“). Pokud u obou zvolíš silný souhlas (nebo u obou silný nesouhlas), je to rozpor. <b>0–1</b> = normální (jeden rozpor se stane každému, situace bývají různé), <b>2 a víc</b> = odpovědi mohly být nepozorné nebo náhodné.</td></tr>
+ <tr><td><b>Kontrolní otázky</b></td><td>${tg(r.chk?2:0,r.chk?r.chk+'× chyba':'v pořádku')}</td><td class="small">Dvě otázky přímo zadávaly, kterou možnost zvolit. Ověřují, že otázky čteš.</td></tr>
+ <tr><td><b>Rychlost odpovědí</b></td><td>${tg(r.latFast!=null&&r.latFast<1500?2:0,r.latFast?(r.latFast/1000).toFixed(1)+' s':'—')}</td><td class="small">Průměrný čas na jednu otázku. Pod 1,5 s je podezřele rychle.</td></tr>
+ <tr><td><b>Celkový čas</b></td><td>${r.secs?Math.round(r.secs/60)+' min':'—'}</td><td class="small">Včetně případných pauz.</td></tr>
+ </table>
  <div class="disc">Test slouží k sebepoznání. Položky jsou české adaptace volně dostupných vědeckých nástrojů (IPIP, HEXACO, ECR, RSES, ASRS, AQ-10, PHQ-8, GAD-7, Mini-SPIN, MDQ, PC-PTSD-5, MSI-BPD, AUDIT-C, SCOFF) a normy jsou orientační, ne česká standardizace. Výsledek nenahrazuje vyšetření psychologem ani psychiatrem a nemůže stanovit diagnózu. Linka první psychické pomoci: 116 123.</div>
- <div class="row" style="margin-top:18px"><button class="btn" id="copy">Zkopírovat výsledky jako text</button><button class="btn ghost" id="edit">Upravit odpovědi</button><button class="btn ghost" id="redo">Vyplnit znovu</button></div>`);
+ <div class="row noprint" style="margin-top:18px"><button class="btn" id="pdf">Stáhnout report (PDF)</button><button class="btn ghost" id="copy">Zkopírovat jako text</button><button class="btn ghost" id="edit">Upravit odpovědi</button><button class="btn ghost" id="redo">Vyplnit znovu</button></div>`);
  app.innerHTML=T(h);
+ $('#pdf').onclick=()=>makePDF(nm);
  $('#redo').onclick=()=>{S={screen:'intro',profile:{},answers:{},lat:{},page:0,start:null};try{localStorage.removeItem(LS)}catch(e){}saved=null;render();scrollTo(0,0)};
  $('#edit').onclick=()=>{S.screen='q';S.page=0;save();render();scrollTo(0,0)};
  $('#copy').onclick=()=>{
@@ -774,6 +785,43 @@ function renderResults(){
   const txt=lines.join('\n');
   (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Zkopírováno do schránky')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Zkopírováno')}catch(e){toast('Kopírování se nezdařilo')}ta.remove()});
  };
+}
+function loadScript(src){return new Promise((ok,err)=>{const sc=document.createElement('script');sc.src=src;sc.onload=ok;sc.onerror=err;document.head.appendChild(sc)})}
+async function makePDF(nm){
+ const btn=$('#pdf');const label=btn.textContent;btn.disabled=true;btn.textContent='Připravuji report…';
+ const y0=scrollY;let wrap=null;
+ try{
+  if(!window.html2canvas)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if(!window.jspdf)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  const p=S.profile,d=new Date();
+  wrap=document.createElement('div');wrap.className='report';
+  wrap.innerHTML=`<div class="rep-head"><div style="font:700 30px Fraunces,serif">Psyché – osobnostní report</div><div class="muted">${nm?nm+' · ':''}${p.gender==='f'?'žena, ':p.gender==='m'?'muž, ':''}${p.age} let · vyplněno ${d.toLocaleDateString('cs-CZ')}</div></div>`;
+  [...app.querySelectorAll('.card')].forEach(c=>{if(c.querySelector('.toc'))return;const k=c.cloneNode(true);k.querySelectorAll('.noprint').forEach(x=>x.remove());wrap.appendChild(k)});
+  wrap.style.cssText='position:absolute;left:0;top:0;width:760px;background:#fff;z-index:-5';
+  document.body.appendChild(wrap);scrollTo(0,0);
+  const blocks=[];[...wrap.children].forEach(el=>{if(el.classList.contains('card')&&!el.classList.contains('arche'))[...el.children].forEach((c,i)=>blocks.push({el:c,gap:i===0?7:2.5}));else blocks.push({el,gap:4})});
+  const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4'});const PW=210,PH=297,M=12,CW=PW-2*M,MAXH=PH-2*M-6;let y=M,first=true;
+  for(let i=0;i<blocks.length;i++){
+   btn.textContent=`Připravuji report… ${Math.round(i/blocks.length*90)} %`;
+   const bl=blocks[i];const cv=await html2canvas(bl.el,{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0,logging:false});
+   bl.cv=cv;bl.h=cv.width?cv.height*CW/cv.width:0;
+   bl.head=/^H[23]$/.test(bl.el.tagName)||(bl.el.tagName==='P'&&bl.el.classList.contains('muted')&&i>0&&blocks[i-1].el.tagName==='H2');
+  }
+  for(let i=0;i<blocks.length;i++){
+   const bl=blocks[i],cv=bl.cv,h=bl.h;if(!h)continue;
+   if(!first)y+=bl.gap;first=false;
+   let need=h;if(bl.head){let j=i+1;while(j<blocks.length&&blocks[j].head){need+=blocks[j].h+blocks[j].gap;j++}if(j<blocks.length)need+=Math.min(blocks[j].h,60)+blocks[j].gap}
+   if(h<=MAXH){if(y+need>PH-M-6&&y>M+1){pdf.addPage();y=M}pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',M,y,CW,h);y+=h}
+   else{const pxmm=cv.width/CW;let off=0;if(y>M+20){pdf.addPage();y=M}
+    while(off<cv.height){const sh=Math.min((PH-M-6-y)*pxmm,cv.height-off);const t=document.createElement('canvas');t.width=cv.width;t.height=sh;t.getContext('2d').drawImage(cv,0,off,cv.width,sh,0,0,cv.width,sh);
+     pdf.addImage(t.toDataURL('image/jpeg',.9),'JPEG',M,y,CW,sh/pxmm);off+=sh;y+=sh/pxmm;if(off<cv.height){pdf.addPage();y=M}}}
+  }
+  const n=pdf.getNumberOfPages();for(let i=1;i<=n;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(140);pdf.text('Psyché – osobnostní report',M,PH-6);pdf.text(i+' / '+n,PW-M,PH-6,{align:'right'})}
+  const file='psyche-report'+(nm?'-'+nm.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'-'):'')+'.pdf';
+  pdf.save(file);
+  toast(window.self!==window.top?'Pokud se stažení nespustilo, otevři test přes GitHub Pages':'Report stažen');
+ }catch(e){console.error(e);toast('Report se nepodařilo vytvořit')}
+ if(wrap)wrap.remove();scrollTo(0,y0);btn.disabled=false;btn.textContent=label;
 }
 render();
 </script>
